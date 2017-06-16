@@ -1,0 +1,38 @@
+corr_3d_sphr{
+  bigq = false
+  lmax = 2
+  particle1 = pi+
+  particle2 = pi+
+  storage_directory = baselineModelData
+  file_list {
+    correlation_qinv3d_Ylm_0.dat
+    correlation_qinv3d_Ylm_1.dat
+    correlation_qinv3d_Ylm_2.dat
+    correlation_qinv3d_Ylm_3.dat
+    correlation_qinv3d_Ylm_4.dat
+    correlation_qinv3d_Ylm_5.dat
+    correlation_qinv3d_Ylm_6.dat
+    correlation_qinv3d_Ylm_7.dat
+    correlation_qinv3d_Ylm_8.dat
+    correlation_qinv3d_Ylm_9.dat
+    correlation_qinv3d_Ylm_10.dat
+    correlation_qinv3d_Ylm_11.dat
+    correlation_qinv3d_Ylm_12.dat
+    correlation_qinv3d_Ylm_13.dat
+    correlation_qinv3d_Ylm_14.dat
+    correlation_qinv3d_Ylm_15.dat
+    correlation_qinv3d_Ylm_16.dat
+    correlation_qinv3d_Ylm_17.dat
+    correlation_qinv3d_Ylm_18.dat
+    correlation_qinv3d_Ylm_19.dat
+    correlation_qinv3d_Ylm_20.dat
+    correlation_qinv3d_Ylm_21.dat
+    correlation_qinv3d_Ylm_22.dat
+    correlation_qinv3d_Ylm_23.dat
+    correlation_qinv3d_Ylm_24.dat
+    correlation_qinv3d_Ylm_25.dat
+    correlation_qinv3d_Ylm_26.dat
+    correlation_qinv3d_Ylm_27.dat
+  }
+
+}

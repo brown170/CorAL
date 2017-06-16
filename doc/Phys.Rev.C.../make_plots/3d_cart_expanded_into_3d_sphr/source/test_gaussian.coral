@@ -1,0 +1,7 @@
+string particle1 pi+
+string particle2 pi+
+double width 5.0
+double height 1.0
+int  l 0
+int  m 0
+bool realpart true 

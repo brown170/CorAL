@@ -1,0 +1,182 @@
+# <<BEGIN-copyright>>
+# 
+#                 The GNU General Public License (GPL) Version 2, June 1991
+# 
+# Copyright (c) 2013, Lawrence Livermore National Security, LLC. Produced at the Lawrence 
+# Livermore National Laboratory. Written by Ron Soltz (soltz1@llnl.gov), David A. Brown 
+# (dbrown@bnl.gov) and Scott Pratt (pratts@pa.msu.edu).
+# 
+# CODE-CODE-643336 All rights reserved. 
+# 
+# This file is part of CorAL, Version: 1.17.
+# 
+# Please see the file LICENSE.TXT in the main directory of this source code distribution.
+# 
+# This program is free software; you can redistribute it and/or modify it under the terms of 
+# the GNU General Public License (as published by the Free Software Foundation) version 2, 
+# dated June 1991.
+# 
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+# without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# See the terms and conditions of the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License along with this program; 
+# if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, 
+# MA 02111-1307 USA
+# 
+# <<END-copyright>>
+import sys,os
+Import('coralenv')
+
+inclist = Split('\
+coral.h \
+CF2Source/sfit.h \
+CF2Source/minimization.h \
+CFCalc/cfcalc.h \
+Kernel/kernel.h \
+Kernel/kernel_chooser.h \
+Source2CF/source2cf.h \
+SourceCalc/sourcecalc.h \
+WaveFunctions/wavefunction.h \
+Convolutions/convolution.h \
+CorrelationFunctions/corr1d_histo.h \
+CorrelationFunctions/corr3d_histo.h \
+CorrelationFunctions/corr3d_ylm.h \
+CorrelationFunctions/corrbase.h \
+Expanders/expander.h \
+Inverting/basisfunc_imager1d.h \
+Inverting/bspline_imager1d.h \
+Inverting/general_imager1d.h \
+Inverting/general_imager3d.h \
+Inverting/imager.h \
+Inverting/uncoupled_imager3d.h \
+ObjectInterfaces/basis_spline1d.h \
+ObjectInterfaces/chebyshevpoly_expansion1d.h \
+ObjectInterfaces/dataset.h \
+ObjectInterfaces/func_expansion1d.h \
+ObjectInterfaces/generic_spline1d.h \
+ObjectInterfaces/harmonic_expansion.h \
+ObjectInterfaces/hermitefunction_expansion1d.h \
+ObjectInterfaces/histogram1d.h \
+ObjectInterfaces/histogram3d.h \
+ObjectInterfaces/laguerrepoly_expansion1d.h \
+ObjectInterfaces/legendrepoly_expansion1d.h \
+ObjectInterfaces/objects1d.h \
+ObjectInterfaces/objects3d.h \
+ObjectInterfaces/orthogfunc_expansion1d.h \
+OSCAR/oscar_accumulator.h \
+OSCAR/oscar_correlation_generator_1d.h \
+OSCAR/oscar_correlation_generator_3dcart.h \
+OSCAR/oscar_correlation_generatorbase.h \
+OSCAR/oscar.h \
+OSCAR/oscar_source_generator_1d.h \
+OSCAR/oscar_source_generator_3dcart.h \
+OSCAR/oscar_source_generator_3dsphr.h \
+OSCAR/oscar_source_generatorbase.h \
+PairDistributions/pairdist1d_histo.h \
+PairDistributions/pairdist3d_histo.h \
+PairDistributions/pairdist3d_ylm.h \
+PairDistributions/pairdist_base.h \
+SourceFunctions/sou3d_ylm.h \
+SourceFunctions/soubase.h \
+SourceFunctions/BSplines/sou1d_bsplines.h \
+SourceFunctions/Gaussian/sou1d_2gauss.h \
+SourceFunctions/Gaussian/sou1d_gauss.h \
+SourceFunctions/Histogram/sou1d_histo.h \
+SourceFunctions/Histogram/sou3d_histo.h \
+SourceFunctions/OrthogFuncs/sou1d_chebyshev.h \
+SourceFunctions/OrthogFuncs/sou1d_hermite.h \
+SourceFunctions/OrthogFuncs/sou1d_laguerre.h \
+SourceFunctions/OrthogFuncs/sou1d_legendre.h \
+')
+
+srclist = Split('CF2Source/sfit.cc \
+CF2Source/sfit_3dgaussian.cc \
+CF2Source/sfit_blast.cc \
+CF2Source/sfit_GX1d.cc \
+CF2Source/minimization.cc \
+CFCalc/cfcalc.cc \
+Kernel/kernel.cc \
+Kernel/kernel_chooser.cc \
+Source2CF/source2cf.cc \
+SourceCalc/sourcecalc.cc \
+SourceCalc/sourcecalc_blast.cc \
+SourceCalc/sourcecalc_gauss.cc \
+SourceCalc/sourcecalc_GX1d.cc \
+SourceCalc/sourcecalc_OSCAR.cc \
+WaveFunctions/wfcommon/kpi_phaseshifts.cc \
+WaveFunctions/wfcommon/pipi_phaseshifts.cc \
+WaveFunctions/wfcommon/reid93.cc \
+WaveFunctions/wf/wf_generic.cc \
+WaveFunctions/wf/wf_pipluspiplus_nostrong.cc \
+WaveFunctions/wf/wf_pipluspiminus_nostrong.cc \
+WaveFunctions/wf/wf_kpluspiminus_phaseshift.cc \
+WaveFunctions/wf/wf_kpluspiminus_sqwell.cc \
+WaveFunctions/wf/wf_kpluspiplus_sqwell.cc \
+WaveFunctions/wf/wf_lambdalambda_phaseshift.cc \
+WaveFunctions/wf/wf_lambdalambdaantiparspin_phaseshift.cc \
+WaveFunctions/wf/wf_lambdalambdaparspin_phaseshift.cc \
+WaveFunctions/wf/wf_nn_phaseshift.cc \
+WaveFunctions/wf/wf_pipluspiminus_phaseshift.cc \
+WaveFunctions/wf/wf_pipluspiminus_sqwell.cc \
+WaveFunctions/wf/wf_pipluspiplus_phaseshift.cc \
+WaveFunctions/wf/wf_pipluspiplus_sqwell.cc \
+WaveFunctions/wf/wf_pkplus_phaseshift.cc \
+WaveFunctions/wf/wf_pkplus_sqwell.cc \
+WaveFunctions/wf/wf_plambda_phaseshift.cc \
+WaveFunctions/wf/wf_pn_phaseshift.cc \
+WaveFunctions/wf/wf_pp_phaseshift.cc \
+WaveFunctions/wf/wf_pp_schrod.cc \
+WaveFunctions/wf/wf_ppiminus_sqwell.cc \
+WaveFunctions/wf/wf_ppiplus_phaseshift.cc \
+WaveFunctions/wf/wf_ppiplus_sqwell.cc \
+WaveFunctions/wf/wf_Xipi_phaseshift.cc \
+WaveFunctions/wfcommon/partwave.cc \
+WaveFunctions/wfcommon/planewave.cc \
+WaveFunctions/wfcommon/wfcommon.cc \
+WaveFunctions/wfcommon/wfsquarewell.cc \
+Convolutions/convolution.cc \
+CorrelationFunctions/corrbase.cc \
+Expanders/expander.cc \
+Inverting/basisfunc_imager1d.cc \
+Inverting/bspline_imager1d.cc \
+Inverting/general_imager1d.cc \
+Inverting/general_imager3d.cc \
+Inverting/imager.cc \
+ObjectInterfaces/basis_spline1d.cc \
+ObjectInterfaces/chebyshevpoly_expansion1d.cc \
+ObjectInterfaces/dataset.cc \
+ObjectInterfaces/func_expansion1d.cc \
+ObjectInterfaces/generic_spline1d.cc \
+ObjectInterfaces/hermitefunction_expansion1d.cc \
+ObjectInterfaces/histogram1d.cc \
+ObjectInterfaces/histogram3d.cc \
+ObjectInterfaces/laguerrepoly_expansion1d.cc \
+ObjectInterfaces/legendrepoly_expansion1d.cc \
+ObjectInterfaces/objects1d.cc \
+ObjectInterfaces/orthogfunc_expansion1d.cc \
+OSCAR/oscar_accumulator.cc \
+OSCAR/oscar.cc \
+OSCAR/oscar_correlation_generator_1d.cc \
+OSCAR/oscar_correlation_generator_3dcart.cc \
+OSCAR/oscar_correlation_generatorbase.cc \
+OSCAR/oscar_source_generator_1d.cc \
+OSCAR/oscar_source_generator_3dcart.cc \
+OSCAR/oscar_source_generator_3dsphr.cc \
+OSCAR/oscar_source_generatorbase.cc \
+PairDistributions/pairdist_base.cc \
+SourceFunctions/soubase.cc \
+SourceFunctions/BSplines/sou1d_bsplines.cc \
+SourceFunctions/Gaussian/sou1d_2gauss.cc \
+SourceFunctions/Gaussian/sou1d_gauss.cc \
+SourceFunctions/OrthogFuncs/sou1d_chebyshev.cc \
+SourceFunctions/OrthogFuncs/sou1d_hermite.cc \
+SourceFunctions/OrthogFuncs/sou1d_laguerre.cc \
+SourceFunctions/OrthogFuncs/sou1d_legendre.cc \
+' )
+
+coralenv.Install('#include', inclist)
+
+coral_lib=coralenv.Library('coral', source = srclist)
+
+coralenv.Install('#lib',[coral_lib])

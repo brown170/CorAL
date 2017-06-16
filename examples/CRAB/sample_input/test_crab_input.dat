@@ -1,0 +1,59 @@
+# Details of phase-space distribution we're working on 
+string  oscar_file test_phasemaker_output_oscar.dat
+int     pid 211
+int     max_number_pairs 10000000
+double  q_cut_oscar 60.0
+
+# Stuff to initialize the source we're going to use to build the correlation with
+string  source_file test_crab_output_source.dat
+parameter_map source_settings {
+    string  particle1           pi+
+    string  particle2           pi+
+    int     ndata               100
+    double  dx                  1.0
+    double  xoffset             0.5
+    bool    fixed_width_bins    true
+    string  storage_directory   junkInDirectory
+    int     lmax                4
+    int     nx                  50
+    int     ny                  50
+    int     nz                  50
+    double  dy                  2.0
+    double  dz                  2.0
+    double  yoffset             1.0
+    double  zoffset             1.0
+    bool    fold_side           true
+    bool    fold_out            true
+    bool    fold_long           true
+}
+
+# Kernel settings, we'll convolute this with the source to get the correlation
+parameter_map kernel_settings {
+    #int     nqmax       200
+    #int     nrmax       200
+    #int     kellmax     0
+    #double  delq        0.5
+    #double  delr        0.5
+    bool    IDENTICAL   true
+    bool    hbt_only    true
+}
+
+# Settings for the output correlation
+string  correlation_file test_crab_output_correlation.dat
+parameter_map correlation_settings {
+    string  particle1           pi+
+    string  particle2           pi+
+    int     ndata               50
+    double  dx                  10.0
+    double  xoffset             5.0
+    bool    fixed_width_bins    true
+    string  storage_directory   junkOutDirectory
+    int     lmax                4
+    int     nx                  10
+    int     ny                  10
+    int     nz                  10
+    double  dy                  10.0
+    double  dz                  10.0
+    double  yoffset             5.0
+    double  zoffset             5.0
+}

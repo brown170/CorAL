@@ -1,0 +1,6 @@
+
+int lmax 4
+string particle1 pi+
+string particle2 pi+
+bool skip_odd_l 1
+string storage_directory junkInDirectory

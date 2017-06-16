@@ -1,0 +1,16 @@
+corr_3d_sphr{
+  bigQ = false
+  lmax = 2
+  particle1 = pi0
+  particle2 = pi0
+  storage_directory = HBTOnlyTestData
+  term_filenames {
+    testData_0_0_re.coral
+    testData_2_0_re.coral
+    testData_2_1_re.coral
+    testData_2_1_im.coral
+    testData_2_2_re.coral
+    testData_2_2_im.coral
+  }
+
+}

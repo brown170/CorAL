@@ -1,0 +1,73 @@
+src/coralutils/cheezyparser.h:10:#include "parametermap.h"
+src/coralutils/locobject.h:8:#include "parametermap.h"
+src/coralutils/utilities.h:24:#include "parametermap.h"
+src/coralutils/Arrays/arrays.h:9:#include "parametermap.h"
+src/coralutils/ParameterMap/parametermap.cc:4:#include "parametermap.h"
+
+src/coral/Convolutions/convolution.h:4:#include "parametermap.h"
+
+src/coral/CorrelationFunctions/corrbase.h:5:#include "parametermap.h"
+
+src/coral/Expanders/expander.h:7:#include "parametermap.h"
+
+src/coral/Inverting/imager.h:6:#include "parametermap.h"
+src/coral/Inverting/imager.cc:2:#include "parametermap.h"
+src/coral/Inverting/general_imager1d.h:5:#include "parametermap.h"
+src/coral/Inverting/basisfunc_imager1d.h:7:#include "parametermap.h"
+src/coral/Inverting/bspline_imager1d.h:5:#include "parametermap.h"
+src/coral/Inverting/bspline_imager1d.cc:2:#include "parametermap.h"
+src/coral/Inverting/general_imager1d.cc:2:#include "parametermap.h"
+src/coral/Inverting/general_imager3d.cc:2:#include "parametermap.h"
+src/coral/Inverting/general_imager3d.h:5:#include "parametermap.h"
+src/coral/Inverting/uncoupled_imager3d.h:5:#include "parametermap.h"
+
+src/coral/Kernel/kernel.h:13:#include "parametermap.h"
+src/coral/Kernel/kernel_chooser.h:7:#include "parametermap.h"
+
+src/coral/OSCAR/oscar.h:4:#include "parametermap.h"
+src/coral/OSCAR/oscar_accumulator.h:4:#include "parametermap.h"
+src/coral/OSCAR/oscar_correlation_generator_1d.h:4:#include "parametermap.h"
+src/coral/OSCAR/oscar_correlation_generator_3dcart.h:4:#include "parametermap.h"
+src/coral/OSCAR/oscar_correlation_generatorbase.h:4:#include "parametermap.h"
+src/coral/OSCAR/oscar_source_generator_1d.h:4:#include "parametermap.h"
+src/coral/OSCAR/oscar_source_generator_3dcart.h:4:#include "parametermap.h"
+src/coral/OSCAR/oscar_source_generator_3dsphr.h:4:#include "parametermap.h"
+src/coral/OSCAR/oscar_source_generatorbase.h:4:#include "parametermap.h"
+
+x   src/coral/ObjectInterfaces/objects1d.h:4:#include "parametermap.h"
+x   src/coral/ObjectInterfaces/func_expansion1d.h:6:#include "parametermap.h"
+src/coral/ObjectInterfaces/orthogfunc_expansion1d.h:4:#include "parametermap.h"
+x   src/coral/ObjectInterfaces/histogram1d.h:5:#include "parametermap.h"
+src/coral/ObjectInterfaces/chebyshevpoly_expansion1d.h:4:#include "parametermap.h"
+x   src/coral/ObjectInterfaces/hermitefunction_expansion1d.h:4:#include "parametermap.h"
+x   src/coral/ObjectInterfaces/laguerrepoly_expansion1d.h:4:#include "parametermap.h"
+src/coral/ObjectInterfaces/legendrepoly_expansion1d.h:4:#include "parametermap.h"
+
+x   src/coral/ObjectInterfaces/dataset.h:6:#include "parametermap.h"
+
+src/coral/ObjectInterfaces/objects3d.h:4:#include "parametermap.h"
+src/coral/ObjectInterfaces/histogram3d.h:5:#include "parametermap.h"
+
+src/coral/PairDistributions/pairdist_base.h:5:#include "parametermap.h"
+
+src/coral/Source2CF/source2cf.h:8:#include "parametermap.h"
+src/coral/SourceCalc/sourcecalc.h:8:#include "parametermap.h"
+
+src/coral/WaveFunctions/wavefunction.h:15:#include "parametermap.h"
+
+src/coral/SourceFunctions/soubase.h:6:#include "parametermap.h"
+src/coral/SourceFunctions/BSplines/sou1d_bsplines.h:7:#include "parametermap.h"
+src/coral/SourceFunctions/Gaussian/sou1d_gauss.h:6:#include "parametermap.h"
+src/coral/SourceFunctions/OrthogFuncs/sou1d_chebyshev.h:5:#include "parametermap.h"
+src/coral/SourceFunctions/OrthogFuncs/sou1d_hermite.h:5:#include "parametermap.h"
+src/coral/SourceFunctions/OrthogFuncs/sou1d_laguerre.h:5:#include "parametermap.h"
+src/coral/SourceFunctions/OrthogFuncs/sou1d_legendre.h:5:#include "parametermap.h"
+
+x   src/bfplot/bfplot.cc:7:#include "parametermap.h"
+x   src/chum/chum.cc:8:#include "parametermap.h"
+x   src/converts2c/converts2c.cc:7:#include "parametermap.h"
+x   src/crab/crab.cc:1:#include "parametermap.h"
+x   src/diver/diver.cc:6:#include "parametermap.h"
+x   src/scplot/scplot.cc:7:#include "parametermap.h"
+x   src/shark/shark.cc:5:#include "parametermap.h"
+

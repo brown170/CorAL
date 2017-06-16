@@ -1,0 +1,64 @@
+# Details of phase-space distribution we're working on 
+# and settings that influence how it is handled
+string  oscar_file pion_withtail_chum_output_oscar.dat
+int     pid 211
+int     max_number_pairs 10000000 #
+double  q_cut_oscar 60.0
+bool    fold_side           true  #false
+bool    fold_out            true  #false
+bool    fold_long           true  #false
+string  correlation_accumulation_mode not_default
+
+# Stuff to initialize the source we're going to use to build the correlation with
+string  source_file pion_withtail_crab_output_source.dat
+parameter_map source_settings {
+    string  particle1           pi+
+    string  particle2           pi+
+    int     ndata               100
+    double  dx                  1.0
+    double  xoffset             0.5
+    bool    fixed_width_bins    true
+    string  storage_directory   pion_withtail_crab_output_source
+    int     lmax                6
+    int     nx                  50
+    int     ny                  50
+    int     nz                  50
+    double  dy                  2.0
+    double  dz                  2.0
+    double  yoffset             1.0
+    double  zoffset             1.0
+}
+
+# Kernel settings, we'll convolute this with the source to get the correlation
+parameter_map kernel_settings {
+    string  particle1           pi+
+    string  particle2           pi+
+    bool    read_cache          true
+    string  param_filename      wfparameters.dat
+    string  kernel_cache        kcache/pi+pi+
+    bool    use_cache           true
+    bool    hbt_only            false
+}
+
+parameter_map imager_settings {
+}
+
+# Settings for the output correlation
+string  correlation_file pion_withtail_crab_output_correlation.dat
+parameter_map correlation_settings {
+    string  particle1           pi+
+    string  particle2           pi+
+    int     ndata               25
+    double  dx                  2.0
+    double  xoffset             1.0
+    bool    fixed_width_bins    true
+    string  storage_directory   pion_withtail_crab_output_correlation
+    int     lmax                6
+    int     nx                  25
+    int     ny                  25
+    int     nz                  25
+    double  dy                  2.0
+    double  dz                  2.0
+    double  yoffset             1.0
+    double  zoffset             1.0
+}

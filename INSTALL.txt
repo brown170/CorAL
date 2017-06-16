@@ -1,0 +1,75 @@
+1/20/2012
+David Brown
+
+==================================================================
+            CorAL -- The Correlation Algorithm Library
+==================================================================
+
+blurb
+
+doc/coral.pdf
+
+-------------------- how to build CorAL -------------------- 
+
+You need to have the GSL, the Gnu Scientific Library 
+(http://www.gnu.org/software/gsl/) installed otherwise you can't build CorAL. 
+You also need to tell CorAL where GSL is, since it may be in an unexpected 
+place.  Set the following environment variables:
+
+    * CORAL_GSLPATH -- i.e. $CORAL_GSLPATH/lib/libgsl.a  
+    * CORAL_X11PATH -- optional $CORAL_X11PATH/lib/libX11.a
+    * CORAL_HOME -- optional, usu. sets to top level of project
+    * CORAL_CCFLAGS -- optional compilation flags
+
+
+CorAL uses the scons build system to handle cross-platform builds.  Scons is
+available at http://www.scons.org and it is included in CorAL in the scons 
+subdirectory.  It is a pure Python package so requires no building or special 
+installation.
+
+
+To build CorAL, from the top-level directory do: 
+
+    > scons/scons.py
+
+the files will be built in the build/ directory.  Executables will be copied to 
+the bin/ directory and the main libraries in the lib/ directory.  The header 
+files will all be copied to include/.
+
+
+For debugging versions and to make the tests do:
+
+    > scons/scons.py debug=True tests=True
+
+Also, if you want to rebuild the CorAL Code Reference (see 
+doc/api-docs/index.html), you will need to install Doxygen
+(http://www.stack.nl/~dimitri/doxygen/).  See the Doxyfile for setting this up. 
+To actually (re)build the documentation, do:
+
+    > scons/scons.py docs=True
+
+The final documentation will be copied to the doc/ directory.
+
+-------------------- how to use CorAL -------------------- 
+
+The main part of the project are the static libraries in the lib/ directory.  
+However, using them is not currently well documented, so we provide examples and 
+executables that use the libraries.  In the bin/ directory, there are several 
+executables:
+
+    * bfplot        - simple plots of basis functions
+    * chum          - make OSCAR formatted events from simple core-halo model
+    * converts2c    - fold a source w/ kernal to make a correlation 
+    * crab          - reimagining of S. Pratt's CoRrelation AfterBurner
+    * diver         - source imaging code
+    * scplot        - simple plots of sources & correlations
+    * shark         - precompute kernels, in harmonic bases
+
+All have inline help (invoke using e.g. "crab -h").
+
+
+-------------------- developing with CorAL -------------------- 
+
+lib/
+include/
+doc/api-docs/index.html

@@ -1,0 +1,17 @@
+    bool    read_cache          true
+    string  param_filename      wfparameters.dat
+    string  kernel_cache        kcache
+    bool    use_cache           true
+
+int l 0
+int m 0
+int ndata 10
+bool fixed_width_bins true
+double dx 4.0
+double xoffset 2.0
+double xmax 40.0
+double xmin 0
+string particle1  pi+
+string particle2  pi+
+bool realpart true
+bool spherical_harmonic true

@@ -1,0 +1,29 @@
+    bool    read_cache          true
+    string  param_filename      wfparameters.dat
+    string  kernel_cache        kcache
+    bool    use_cache           true
+
+matrix_double covmtx_datablock {
+3.92843e-09 3.08112e-09 3.36332e-09 -2.30719e-10 3.76721e-09 
+3.08112e-09 2.42728e-09 2.66691e-09 -1.91295e-10 2.96645e-09 
+3.36332e-09 2.66691e-09 3.14781e-09 -5.9313e-10 3.64183e-09 
+-2.30719e-10 -1.91295e-10 -5.9313e-10 7.70931e-10 -9.5027e-10 
+3.76721e-09 2.96645e-09 3.64183e-09 -9.5027e-10 4.45842e-09 
+}
+int l 0
+int m 0
+int ndata 5
+string particle1 pi+
+string particle2 pi+
+bool realpart true
+bool spherical_harmonic true
+double xmax 60
+double xmin 0
+double xscale 1
+vector_double y_datablock {
+0.00057987
+-0.000507575
+-6.55704e-05
+-0.000112479
+0.000104979
+}

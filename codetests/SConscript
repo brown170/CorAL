@@ -1,0 +1,72 @@
+# <<BEGIN-copyright>>
+# 
+#                 The GNU General Public License (GPL) Version 2, June 1991
+# 
+# Copyright (c) 2013, Lawrence Livermore National Security, LLC. Produced at the Lawrence 
+# Livermore National Laboratory. Written by Ron Soltz (soltz1@llnl.gov), David A. Brown 
+# (dbrown@bnl.gov) and Scott Pratt (pratts@pa.msu.edu).
+# 
+# CODE-CODE-643336 All rights reserved. 
+# 
+# This file is part of CorAL, Version: 1.17.
+# 
+# Please see the file LICENSE.TXT in the main directory of this source code distribution.
+# 
+# This program is free software; you can redistribute it and/or modify it under the terms of 
+# the GNU General Public License (as published by the Free Software Foundation) version 2, 
+# dated June 1991.
+# 
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+# without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# See the terms and conditions of the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License along with this program; 
+# if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, 
+# MA 02111-1307 USA
+# 
+# <<END-copyright>>
+Import( 'coralenv' )
+for code in [\
+    'boltztest',\
+    'cgctester',\
+    'chtester',\
+    'complexmatrixtest',\
+    'dycast_tester',\
+    'gslbesstester',\
+    'gslbug',\
+    'gslrantest',\
+    'iwtest',\
+    'kzeros',\
+    'phaseshift_tester',\
+    'planewavetest',\
+    'rantest',\
+    'realmatrixtest',\
+    'ylmchtester',\
+    'ylmtester',\
+    'testBoost',\
+    'testConvolve',\
+    'coulwave/cgtester',\
+    'tnt_inversions',\
+    'sourcesample_gauss',\
+    'sourcesample_blast',\
+    'kernelsample',\
+    'wfsample',\
+    'stester'\
+]:
+    coralenv.Program( code, [ code+'.cc' ], LIBS = [ 'coral', 'gsl', 'm', 'stdc++', 'gslcblas', 'coralutils' ] )
+    coralenv.Install( '#codetests', code )
+
+#=======================
+#    Obsolete Tests:
+#=======================
+#    'besstester',\
+#    'coulwave/ptester'\
+#    'dcuhre/dtest1',\
+#    'dcuhre/dtest2',\
+#    'ylm_tester',\
+
+#=================================
+#    Tests which have problems:
+#=================================
+#    'coulwave/cwtester',\  # function CWincoming_smallr not declared in wavefunction.h
+#    'sourcesample_OSCAR',\ # wrong function prototype for CSourceCalc_OSCAR::CalcS ??

@@ -1,0 +1,22 @@
+
+matrix_double covmtx_datablock {
+7.32751e-13 -3.04579e-12 1.61361e-12 -2.1101e-12 
+-3.04579e-12 1.496e-11 -6.75559e-12 1.08734e-11 
+1.61361e-12 -6.75559e-12 3.56342e-12 -4.70242e-12 
+-2.1101e-12 1.08734e-11 -4.70242e-12 8.01312e-12 
+}
+int l 0
+int m 0
+int ndata 4
+string particle1 pi+
+string particle2 pi+
+bool realpart true
+bool spherical_harmonic true
+double xmax 60
+double xmin 0
+vector_double y_datablock {
+0.000100454
+-0.00035311
+0.000208742
+-0.000220402
+}

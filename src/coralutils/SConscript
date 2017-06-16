@@ -1,0 +1,133 @@
+# <<BEGIN-copyright>>
+# 
+#                 The GNU General Public License (GPL) Version 2, June 1991
+# 
+# Copyright (c) 2013, Lawrence Livermore National Security, LLC. Produced at the Lawrence 
+# Livermore National Laboratory. Written by Ron Soltz (soltz1@llnl.gov), David A. Brown 
+# (dbrown@bnl.gov) and Scott Pratt (pratts@pa.msu.edu).
+# 
+# CODE-CODE-643336 All rights reserved. 
+# 
+# This file is part of CorAL, Version: 1.17.
+# 
+# Please see the file LICENSE.TXT in the main directory of this source code distribution.
+# 
+# This program is free software; you can redistribute it and/or modify it under the terms of 
+# the GNU General Public License (as published by the Free Software Foundation) version 2, 
+# dated June 1991.
+# 
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+# without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# See the terms and conditions of the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License along with this program; 
+# if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, 
+# MA 02111-1307 USA
+# 
+# <<END-copyright>>
+import sys,os
+Import('coralenv')
+
+inclist = Split(' \
+Arrays/arrays.h \
+cheezyparser.h \
+convert.h \
+GSLMatrix/gslmatrix.h \
+locobject.h \
+lsqrinvert.h \
+message.h \
+Misc/misc.h \
+NumMath/constants.h \
+NumMath/crombergintegrator.h \
+NumMath/integratevec.h \
+NumMath/cubature.h \
+NumMath/linalg.h \
+NumMath/random.h \
+ParameterMap/parametermap.h \
+SpecialFunctions/Chebyshev/chebyshev.h \
+SpecialFunctions/Chebyshev/chebyshev_fit.h \
+SpecialFunctions/sf.h \
+SpecialFunctions/special_func.h \
+SpecialFunctions/ucofpak_CC.h \
+ThirdPartyPackages/Boost/any.h \
+ThirdPartyPackages/Fortran/cfortran.h \
+ThirdPartyPackages/Fortran/f2c.h \
+ThirdPartyPackages/JAMA/jama_cholesky.h \
+ThirdPartyPackages/JAMA/jama_eig.h \
+ThirdPartyPackages/JAMA/jama_lu.h \
+ThirdPartyPackages/JAMA/jama_qr.h \
+ThirdPartyPackages/JAMA/jama_svd.h \
+ThirdPartyPackages/TNT/tnt.h \
+ThirdPartyPackages/TNT/tnt_array1d.h \
+ThirdPartyPackages/TNT/tnt_array1d_utils.h \
+ThirdPartyPackages/TNT/tnt_array2d.h \
+ThirdPartyPackages/TNT/tnt_array2d_utils.h \
+ThirdPartyPackages/TNT/tnt_array3d.h \
+ThirdPartyPackages/TNT/tnt_array3d_utils.h \
+ThirdPartyPackages/TNT/tnt_fortran_array1d.h \
+ThirdPartyPackages/TNT/tnt_fortran_array1d_utils.h \
+ThirdPartyPackages/TNT/tnt_fortran_array2d.h \
+ThirdPartyPackages/TNT/tnt_fortran_array2d_utils.h \
+ThirdPartyPackages/TNT/tnt_fortran_array3d.h \
+ThirdPartyPackages/TNT/tnt_fortran_array3d_utils.h \
+ThirdPartyPackages/TNT/tnt_i_refvec.h \
+ThirdPartyPackages/TNT/tnt_iml.h \
+ThirdPartyPackages/TNT/tnt_linalg.h \
+ThirdPartyPackages/TNT/tnt_math_utils.h \
+ThirdPartyPackages/TNT/tnt_matrix.h \
+ThirdPartyPackages/TNT/tnt_sparse_matrix.h \
+ThirdPartyPackages/TNT/tnt_sparse_vector.h \
+ThirdPartyPackages/TNT/tnt_stopwatch.h \
+ThirdPartyPackages/TNT/tnt_subscript.h \
+ThirdPartyPackages/TNT/tnt_vector.h \
+ThirdPartyPackages/TNT/tnt_version.h \
+ThirdPartyPackages/yasper/yasper.h \
+utilities.h \
+utils.h \
+')
+
+coralenv.Install('#include', [inclist])
+
+srclist = Split(' \
+Arrays/arraycalc.cc \
+Arrays/charray.cc \
+Arrays/mclist.cc \
+Arrays/threed.cc \
+Arrays/ylmarray.cc \
+cheezyparser.cc \
+convert.cc \
+GSLMatrix/gslmatrix.cc \
+locobject.cc \
+lsqrinvert.cc \
+message.cc \
+Misc/misc.cc \
+NumMath/crombergintegrator.cc \
+NumMath/integratevec.cc \
+NumMath/random.cc \
+NumMath/cubature.cc \
+ParameterMap/parametermap.cc \
+SpecialFunctions/Bessel/bess.cc \
+SpecialFunctions/CartesianHarmonics/chcalc.cc \
+SpecialFunctions/Chebyshev/chebyshev.cc \
+SpecialFunctions/Chebyshev/chebyshev_fit.cc \
+SpecialFunctions/CoulWave/coulwave.cc \
+SpecialFunctions/gamma.cc \
+SpecialFunctions/ucofpak_CC.cc \
+SpecialFunctions/Ylm/ylm.cc \
+ThirdPartyPackages/dcuhre/d07hre.cc \
+ThirdPartyPackages/dcuhre/d09hre.cc \
+ThirdPartyPackages/dcuhre/d113re.cc \
+ThirdPartyPackages/dcuhre/d132re.cc \
+ThirdPartyPackages/dcuhre/dadhre.cc \
+ThirdPartyPackages/dcuhre/dchhre.cc \
+ThirdPartyPackages/dcuhre/dcuhre.cc \
+ThirdPartyPackages/dcuhre/dfshre.cc \
+ThirdPartyPackages/dcuhre/dinhre.cc \
+ThirdPartyPackages/dcuhre/drlhre.cc \
+ThirdPartyPackages/dcuhre/dtrhre.cc \
+ThirdPartyPackages/Fortran/f2c.cc \
+utils.cc \
+')
+
+utilities_lib = coralenv.Library('coralutils', source = [srclist])
+coralenv.Install('#lib',utilities_lib)

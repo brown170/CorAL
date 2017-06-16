@@ -1,0 +1,8 @@
+int     NQMAX       1000
+double  DELQ        0.1
+double  EPSILON     0.5
+int     KLMAX       6
+bool    COULOMB     true
+bool    IDENTICAL   true
+double  DELR        0.1
+int     NRMAX       1000

@@ -1,0 +1,3 @@
+int NQMAX 8
+double DELQ 10
+double EPSILON 1.0

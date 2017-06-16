@@ -1,0 +1,8 @@
+
+bool bigQ false
+string file_prefix term
+int lmax 6
+string particle1 pi+
+string particle2 pi+
+bool skip_odd_l true
+string storage_directory ./pion_withtail_crab_output_correlation

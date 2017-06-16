@@ -1,0 +1,164 @@
+These programs calculate correlation functions for a variety of pairs.
+
+The source code allows one to calculate correlation functions by averaging
+wave functions, e.g.,
+
+C(q) = < phi^2(q,r) >,
+
+where phi is the relative wave function. Your program needs the following to
+calculate phi^2.
+
+1. You need the following include statements:
+#include "wf/common/common.h"
+#include "wf/wf_assorted.h"
+
+2. You need to declare the wavefunction object. There is a class Twavefunction
+from which a variety of other objects are derived, e.g., Twavefunction_ppi,
+Twavefunction_lambdalambda, ...  For instance, inside the main program include
+the lines,
+
+	Twavefunction_pipluspiminus wf;
+	wf=new Twavefunction(parsfilename);
+
+Here, parsfilename is a character array which gives the file name where the
+parameters are kept. The parameters are explained further below.
+
+3. To calculate phi^2, you need a line of either
+
+   psisquared=wf->getpsisquared(q,rmag,ctheta_qr);
+
+where the 3 arguments are double precision and q is the momentum of one of the
+particle in the c.m. frame of the pair (in MeV), rmag is the separation in fm,
+and ctheta_qr is the cosine of the angle between r and q.
+
+or
+   psisquared=wf->getpsisquared(pa,xa,pb,xb);
+
+where all the arguments are four-vectors and a refers to the first species
+while b refers to the second species. The momenta are again in MeV and the 
+distances are in fm. These two functions are overloaded so both work fine.
+
+4. You must include the source code for the specific pair for which you
+analyzing. For example,
+
+#include "wf/wf_pipluspiplus.cc"
+
+The distribution includes a file main.cc which gives an example of what
+you need to do. 
+
+There is a special derived object, Twavefunction_generic, which operates
+differently. This object calculates the wavefunction for symmetrized or
+antisymmetrized Coulomb waves. The parameter symmweightWhen initializing, it should be called with the
+command,
+
+   wf=new Twavefunction_generic(parsfilename,qaqb,ma,mb,symmweight);    
+
+where qaqb is the product of the charges (integer) and ma and mb are the
+masses. symmweight is the fraction of symmetrized while 1-symmweight is the
+fraction of antisymmetrized. For example, symmweight would be 0.5 for
+non-identical particles, would be 1.0 for identical spinless bosons, and 0.0
+for fermions of the same spin. For example, two spin-half identical fermions
+would have symmweight set to 0.25.
+
+The generic object can be reset for different masses with the command,
+    
+    wf->reset(qaqb,ma,mb,symmweight);
+
+which allows you to calculate for different particles without re-initializing
+the Coulomb meshes. This involves some scaling operations so that
+re-initialization is not necessary. Of course, you could simply initialize a
+new object.
+
+_____________________________________________________
+
+The parameter files should be of the form,
+
+value_1 PARAMETER_NAME_1
+value_2 PARAMETER_NAME_2
+value_3 PARAMETER_NAME_3
+.
+.
+
+Current parameters which can be set this way are:
+
+NQMAX 
+An integer used to define the arrays used for calculating the correlation
+function. Although the program can calculate for any value of q, it
+interpolates wave function info from a mesh
+
+DELQ
+This is the spacing of the mesh used for calculating wave functions.
+
+EPSILON
+This is a small distance. For rmag<epsilon, phi^2 is calculated
+according to a prescription described in our paper, while for r>epsilon, phase
+shifted partial waves are explicitly calculated. The answers will not depend on
+epsilon if epsilon is much smaller than the source size. We recommend the
+default value, epsilon=1.0 fm.
+
+ELLMAX
+Largest value of ell for which partial waves might be calculated. Unless you
+need ell>2, leave the default.
+
+COULOMB
+This is a bool which is set to true by default. Setting it to zero will
+cause the calculation to override the value of qaqb set in the
+initialization objects and make qaqb=0.
+
+STRONG
+This is another bool which is set to true by default. Setting it to false
+will result in overiding the initialization and turn off the strong
+interaction. 
+
+QARRAYFILENAME
+Rather than basing the calculations on a uniform mesh of q defined by nqmax and
+delq, you can specify a filename from which nqmax and values of q will be read.
+
+For example if you wanted nqmax set to 20  and delq set to 3 while using
+default values for everything else, the parameter files would have the form
+
+20 NQMAX
+3.0 DELQ
+
+If one wanted to use a mesh where 4 values of q were used, 5.0, 15.0, 45.0,
+and 135.0, one would have the parameter file,
+
+parameters/mypars.dat  QARRAYFILENAME
+
+and the file parameters/mypars.dat would look like
+
+4
+5.0
+15.0
+45.0
+135.0
+
+_____________________________________________________
+
+The source code for calculating wave functions is placed in the wf directory.
+The wf/common directory has codes which are used by many of the various
+wavefunction objects. In the wf directory, you will find a variety of routines,
+e.g., wf_pipluspiplus.cc, which include code specific to a given choice of
+species.  Also included are a directory corr and a directory random which are
+used for binning correlation functions and generating random quantities
+respectively. These are independent of the wave function routines. There is
+also a results directory where the program will print results, and a parameters
+file which stores some parameter files.
+
+To compile the sample program, type:
+   g++ main.cc -o main
+
+
+
+
+
+
+Over time, I hope to improve the documentation and add the ability to calculate
+for more species. 
+
+In the mean time, Good luck!
+
+Please feel free to contact me with questions:
+
+Scott Pratt, (517) 355-9200 x2016
+pratts@pa.msu.edu

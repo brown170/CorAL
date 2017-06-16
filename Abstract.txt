@@ -1,0 +1,51 @@
+CorAL Abstract
+
+1a. Software Acronym: 			CorAL
+
+1b. Short Title: 			Correlation Algorithm Library
+
+2.  Author Name(s) and Affiliations:	David Brown (LLNL, BNL), Scott Pratt (MSU), P Danielewicz (MSU), Michael Heffner (LLNL), Andrew Glenn (?), Ron Soltz (LLNL)
+
+3.  Software Completion Date: 		Incomplete
+
+4.  Brief Description:
+
+	CorAL is a software library designed to aid in the analysis of femtoscopic data.  Femtoscopic data are a class of measured quantities used in heavy-ion collisions to characterize particle emitting source sizes.  The most common type of this data is two-particle correlations induced by the Hanbury-Brown/Twiss (HBT) Effect, but can also include correlations induced by final-state interactions between pairs of emitted particles in a heavy-ion collision.
+
+	Because heavy-ion collisions are complex many particle systems, modeling them is often difficult and accomplished using Boltzmann-inspired transport codes, hydrodynamical models or hybrid techniques.  Using the CRAB module, CorAL can turn the output from these models into something that can be directly compared to experimental data.  
+
+	CorAL can also take the raw experimentally measured correlation functions and image them by inverting the Koonin-Pratt equation to extract the space-time emission profile of the particle emitting source.  This source function can be further analyzed or directly compared to theoretical calculations.
+
+5.  Method of Solution:
+
+	To compute particle emitting sources or correlation functions from theoretical models, CorAL uses Monte Carlo integration.
+
+	To extract source functions directly from experimental data, CorAL first discretizes the source function in one of several basis function representations.  With this in hand, the Koonin-Pratt equation, which is a Fredholm integral equation, becomes a matrix equation.  This matrix equation can be inverted using standard methods of Bayesian inference, producing the source function with experimental uncertainties preserved.
+
+6.  Computer(s) for which software is written:  PC, server
+
+7.  Operating System:				Linux, MacOSX
+
+8.  Programming Language(s) Used:		C++, Python
+
+9.  Software Limitations:			Single node, single process (this code has not been parallelized)
+
+10. Unique Features of this Software:		This is a matter of opinion…
+
+11. Related and Auxiliary Software:		CRAB (the CoRrelation Afterburner), which is superseded by CorAL; any heavy-ion modeling code that outputs particle emission data in the OSCAR format (https://karman.physics.purdue.edu/OSCAR/index.php/Main_Page) can be used to create emission sources in CorAL.
+
+12. Other Programming or Operating Information or Restrictions:
+
+13. Hardware Requirements:			Desktop or server 
+
+14. Time Requirements:				
+
+	To build a correlation function or source function using CRAB can take a few hours on a standard desktop machine.  Imaging a correlation function is much faster, taking at most tens of minutes.
+
+15. Reference:
+
+	DA Brown, P Danielewicz, Phys. Lett. B 398 (3), 252-258
+
+	DA Brown, P Danielewicz, Phys. Rev. C 57 (5), 2474
+
+	D. Brown, M. Heffner, R. Soltz, and P. Danielewicz, S. Pratt, Phys. Rev. C 72, 054902 (2005).

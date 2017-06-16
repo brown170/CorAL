@@ -1,0 +1,18 @@
+# stuff for choose_kernel
+string  kernel_particle1    pi+
+string  kernel_particle2    pi+
+bool    read_cache          false
+string  param_filename      wfparameters.dat
+string  kernel_cache        kcache/pi+pi+
+bool    use_cache           true
+bool    hbt_only            false
+# stuff to feed CWaveFunction
+int     NQMAX               1000
+double  DELQ                0.1
+double  EPSILON             0.5
+int     KLMAX               10
+bool    IDENTICAL           true
+bool    COULOMB             true
+bool    IDENTICAL           true
+double  DELR                0.1
+int     NRMAX               1000

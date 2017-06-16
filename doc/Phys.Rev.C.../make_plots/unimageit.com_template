@@ -1,0 +1,25 @@
+
+string correlation_file OUTPUTCORRELATIONFILENAME
+string source_file      INPUTSOURCEFILENAME
+
+# Kernel settings, we'll convolute this with the source to get the correlation
+parameter_map kernel_settings {
+    bool    read_cache          true
+    string  param_filename      wfparameters.dat
+    string  kernel_cache        kcache/pi+pi+
+    bool    use_cache           true
+    bool    hbt_only            true
+}
+
+parameter_map convoluter_settings {
+    double rmin 0
+    double rmax 100 
+}
+
+# Settings for the correlations we are generating
+parameter_map correlation_settings {
+    bool fixed_width_bins true
+    int ndata  50 
+    double dx  2.0
+    double xoffset  1.0
+}

@@ -1,0 +1,14 @@
+double Rx           4.
+double Ry           3.
+double Rz           6.
+double tau_fo       13.
+double f            0.8
+double T            100.0
+string flowprofile  radial
+double pTmin        00.0
+double pTmax        200.0
+double etamin       0.0
+double etamax       0.35
+int    initial_seed 19723234
+int    num_particles 100000
+string filename     pion_withtail_chum_output_oscar.dat

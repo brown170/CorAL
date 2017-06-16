@@ -1,0 +1,33 @@
+
+string correlation_filename test_crab_output_correlation.dat
+#string correlation_filename pion_correlation.dat
+string source_filename laguerre_output_source.dat
+string source_plot_filename laguerre_output_source_plot.dat
+
+#bool constrain_origin true
+#bool constrain_rmax_zero false
+#string kernel_particle1 K+
+#string kernel_particle2 K-
+#parameter_map kernel_settings {
+#    bool hbt_only true
+#}
+
+bool hbt_only true
+
+#double qmax 70.0
+#double rmax 60.0
+#double qmin 0.0
+#double rmin 0.0
+
+parameter_map correlation_settings {
+    double xmax 70.0
+    double xmin 0.0 
+}
+
+parameter_map source_settings {
+    int ndata 5
+    double xscale 3.0
+    double xmax 30.0 
+    double xmin 0.0 
+}
+

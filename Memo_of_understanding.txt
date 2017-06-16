@@ -1,0 +1,8 @@
+Jan 27, 2006
+TO: Information Management (IM), L-662
+FROM: David A. Brown
+SUBJECT: Memorandum of Understanding
+
+The fete software package is a project that is funded by the DOE/NNSA Advanced Simulations and Computing (ASC) Program.  We have just completed the 1.0 release version of fete.  Because the data fete translates is in the public domain, we would like to release this application under the General Public License to the external nuclear data community.  We have approximately eight facilities interested in using our software. This release of fete has been tested within the Laboratory since June of last year.  We would like distribution of the software by March, 2006, in time for the ENDF/B-VII nuclear data library release.
+
+The information that we are distributing includes the source code for fete, documentation and supporting scripts.

@@ -1,0 +1,33 @@
+
+string correlation_file test_crab_output_correlation.dat
+string imaged_source_file legendre_output_source.dat
+string source_plot_file legendre_output_source_plot.dat
+string restored_correlation_file test_restored_output_correlation.dat
+
+parameter_map imager_settings {
+    bool constrain_origin true
+    #bool constrain_rmax_zero false
+
+    #double qmax 70.0
+    #double rmax 60.0
+    #double qmin 0.0
+    #double rmin 0.0
+}
+    
+parameter_map kernel_settings {
+    #string kernel_particle1 K+
+    #string kernel_particle2 K-
+    bool hbt_only true
+}
+
+parameter_map correlation_settings {
+    double xmax 70.0
+    double xmin 0.0 
+}
+
+parameter_map source_settings {
+    int ndata 8
+    double xmax 60.0 
+    double xmin 0.0 
+}
+

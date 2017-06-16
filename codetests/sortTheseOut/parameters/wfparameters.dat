@@ -1,0 +1,7 @@
+int NQMAX 40
+double DELQ 2
+double EPSILON 0.5
+int KLMAX 2
+bool IDENTICAL true
+double DELR 0.1
+int NRMAX 800
