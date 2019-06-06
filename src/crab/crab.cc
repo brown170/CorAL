@@ -1,29 +1,29 @@
 // <<BEGIN-copyright>>
-// 
+//
 //                 The GNU General Public License (GPL) Version 2, June 1991
-// 
-// Copyright (c) 2013, Lawrence Livermore National Security, LLC. Produced at the Lawrence 
-// Livermore National Laboratory. Written by Ron Soltz (soltz1@llnl.gov), David A. Brown 
+//
+// Copyright (c) 2013, Lawrence Livermore National Security, LLC. Produced at the Lawrence
+// Livermore National Laboratory. Written by Ron Soltz (soltz1@llnl.gov), David A. Brown
 // (dbrown@bnl.gov) and Scott Pratt (pratts@pa.msu.edu).
-// 
-// CODE-CODE-643336 All rights reserved. 
-// 
+//
+// CODE-CODE-643336 All rights reserved.
+//
 // This file is part of CorAL, Version: 1.17.
-// 
+//
 // Please see the file LICENSE.TXT in the main directory of this source code distribution.
-// 
-// This program is free software; you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License (as published by the Free Software Foundation) version 2, 
+//
+// This program is free software; you can redistribute it and/or modify it under the terms of
+// the GNU General Public License (as published by the Free Software Foundation) version 2,
 // dated June 1991.
-// 
-// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-// without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the terms and conditions of the GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License along with this program; 
-// if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, 
+//
+// You should have received a copy of the GNU General Public License along with this program;
+// if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 // MA 02111-1307 USA
-// 
+//
 // <<END-copyright>>
 #include "parametermap.h"
 #include "cheezyparser.h"
@@ -50,7 +50,7 @@
 CSourceFtn1dHisto getSource1d( vector<COSCARLine> particleList, parameterMap m );
 CSourceFtn1dHisto getSource1dOldWay( vector<COSCARLine> particleList, parameterMap m );
 CSourceFtn3dHisto getSource3dCart( vector<COSCARLine> particleList, parameterMap m );
-CSourceFtn3dSphr< CSourceFtn1dHisto > 
+CSourceFtn3dSphr< CSourceFtn1dHisto >
                   getSource3dSphr( vector<COSCARLine> particleList, parameterMap m );
 
 // ------------- wrappers around correlation generators -------------
@@ -103,7 +103,7 @@ int main(int argc, char* argv[]){
 
     MESSAGE << CMessage::warning;
     //(MESSAGE).show_info=true;
-    
+
     bool skip_correlation=false;
     bool make_plots=false;
 
@@ -118,16 +118,16 @@ int main(int argc, char* argv[]){
         if (sarg=="-h") getHelp();
         if (sarg=="-skip_correlation") {
             cout << "Will skip correlation function generation\n"<<endl;
-            skip_correlation = true; 
+            skip_correlation = true;
         }
         else if (sarg=="-make_plots") {
             cout << "Will make files suitable for plotting\n"<<endl;
-            make_plots = true; 
+            make_plots = true;
         }
         else if (sarg.substr(0,1)=="-") modeList.push_back(sarg);
         else paramFile = sarg;
-    }    
-    
+    }
+
     // Read in the input parameters from the argument on the command line
     if (paramFile=="") {
         MESSAGE<<"No inputFile parameter file given!!"<<ENDM_FATAL;
@@ -138,7 +138,7 @@ int main(int argc, char* argv[]){
 
     // Read in the OSCAR formatted data
     string oscarFile = inMap.getItem( "oscar_file", (string)"thermal_gauss01.dat" );
-    vector<COSCARLine> particleList = filterPID( 
+    vector<COSCARLine> particleList = filterPID(
         readOSCARFile(oscarFile),
         inMap.getItem( "pid", 211 )
     );
@@ -156,9 +156,9 @@ int main(int argc, char* argv[]){
         else MESSAGE<< "Unknown mode: "<<*mode<<ENDM_WARN;
         cout << endl;
     }
-    return true;
+    return 0;
 }
-    
+
 //-------------------------------------------------------------------------
 // Function definitions
 //-------------------------------------------------------------------------
@@ -185,7 +185,7 @@ void make1dSourceAndCorrelation( vector<COSCARLine> particleList, parameterMap& 
         }
     }
 }
- 
+
 // ------------- make1dSourceAndCorrelationOldWay -------------
 void make1dSourceAndCorrelationOldWay( vector<COSCARLine> particleList, parameterMap& inMap, bool skip_correlation, bool make_plots ){
     cout << "\nGenerating 1d source, the old way"<<endl;
@@ -223,8 +223,8 @@ void make3dCartSourceAndCorrelation( vector<COSCARLine> particleList, parameterM
     WriteParsToFile( soutMap, parameter::getS(inMap, "source_file", "output_source_3d.dat") );
     if (make_plots){
         plot3dSlices( sanswer,
-            getS( inMap, "source_3d_side_plot_filename", "output_source_3d_side_plot.dat" ), 
-            getS( inMap, "source_3d_out_plot_filename", "output_source_3d_out_plot.dat" ), 
+            getS( inMap, "source_3d_side_plot_filename", "output_source_3d_side_plot.dat" ),
+            getS( inMap, "source_3d_out_plot_filename", "output_source_3d_out_plot.dat" ),
             getS( inMap, "source_3d_long_plot_filename", "output_source_3d_long_plot.dat" )
         );
     }
@@ -236,8 +236,8 @@ void make3dCartSourceAndCorrelation( vector<COSCARLine> particleList, parameterM
         WriteParsToFile( coutMap, parameter::getS(inMap, "correlation_file", "output_correlation_3d.dat") );
         if (make_plots){
             plot3dSlices( answer,
-                getS( inMap, "correlation_3d_side_plot_filename", "output_correlation_3d_side_plot.dat" ), 
-                getS( inMap, "correlation_3d_out_plot_filename", "output_correlation_3d_out_plot.dat" ), 
+                getS( inMap, "correlation_3d_side_plot_filename", "output_correlation_3d_side_plot.dat" ),
+                getS( inMap, "correlation_3d_out_plot_filename", "output_correlation_3d_out_plot.dat" ),
                 getS( inMap, "correlation_3d_long_plot_filename", "output_correlation_3d_long_plot.dat" )
             );
         }
@@ -286,8 +286,8 @@ void make3dSphrSourceAndCorrelation( vector<COSCARLine> particleList, parameterM
     WriteParsToFile( soutMap, getS( inMap, "source_file", "output_source_3dsphr.dat" ) );
     if (make_plots){
         plot3dSlices( soualt3d,
-            getS( inMap, "source_3d_side_plot_filename", "output_source_3d_side_plot.dat" ), 
-            getS( inMap, "source_3d_out_plot_filename", "output_source_3d_out_plot.dat" ), 
+            getS( inMap, "source_3d_side_plot_filename", "output_source_3d_side_plot.dat" ),
+            getS( inMap, "source_3d_out_plot_filename", "output_source_3d_out_plot.dat" ),
             getS( inMap, "source_3d_long_plot_filename", "output_source_3d_long_plot.dat" )
         );
     }
@@ -302,8 +302,8 @@ void make3dSphrSourceAndCorrelation( vector<COSCARLine> particleList, parameterM
         WriteParsToFile( soutMap, getS( inMap, "correlation_file", "output_correlation_3dsphr.dat" ) );
         if (make_plots){
             plot3dSlices( answer,
-                getS( inMap, "correlation_3d_side_plot_filename", "output_correlation_3d_side_plot.dat" ), 
-                getS( inMap, "correlation_3d_out_plot_filename", "output_correlation_3d_out_plot.dat" ), 
+                getS( inMap, "correlation_3d_side_plot_filename", "output_correlation_3d_side_plot.dat" ),
+                getS( inMap, "correlation_3d_out_plot_filename", "output_correlation_3d_out_plot.dat" ),
                 getS( inMap, "correlation_3d_long_plot_filename", "output_correlation_3d_long_plot.dat" )
             );
         }
@@ -328,9 +328,9 @@ void makeCRABCorrelations( vector<COSCARLine> particleList, parameterMap& inMap,
          << "!k(MeV/c)   C(k)     +/- numcounts&dencounts"<<endl;
     for (int i=0; i<corr1d.ndata; ++i)
     {
-        outFile1d<< setw(6) << setprecision(3) << corr1d.midBin(i) << "    " 
-            << setw(6) << setprecision(3) << corr1d.data[i]   << "  " 
-            << setw(9) << setprecision(6) << corr1d.uncert[i] << "  " 
+        outFile1d<< setw(6) << setprecision(3) << corr1d.midBin(i) << "    "
+            << setw(6) << setprecision(3) << corr1d.data[i]   << "  "
+            << setw(9) << setprecision(6) << corr1d.uncert[i] << "  "
             << numPairs1d[i]    << "  " << 0 << endl;
     }
     ofstream outFile3d(parameter::getS(inMap, "crab_correlation_3d_filename", "correlation_qinv3d.dat").c_str());
@@ -342,18 +342,18 @@ void makeCRABCorrelations( vector<COSCARLine> particleList, parameterMap& inMap,
             {
                 int i = corr3d.whatIndex(ix,iy,iz);
                 outFile3d
-                    << setw(6) << setprecision(3) << corr3d.midBinX(ix) << "    " 
-                    << setw(6) << setprecision(3) << corr3d.midBinY(iy) << "    " 
-                    << setw(6) << setprecision(3) << corr3d.midBinZ(iz) << "    " 
-                    << setw(6) << setprecision(3) << corr3d.data[i]     << "  " 
-                    << setw(9) << setprecision(6) << corr3d.uncert[i]   << "  " 
+                    << setw(6) << setprecision(3) << corr3d.midBinX(ix) << "    "
+                    << setw(6) << setprecision(3) << corr3d.midBinY(iy) << "    "
+                    << setw(6) << setprecision(3) << corr3d.midBinZ(iz) << "    "
+                    << setw(6) << setprecision(3) << corr3d.data[i]     << "  "
+                    << setw(9) << setprecision(6) << corr3d.uncert[i]   << "  "
                     << numPairs3d[i]    << "  " << 0 << endl;
             }
     if (make_plots) {
         plot1d( corr1d, getS( inMap, "correlation_plot_filename", "output_correlation_1d_plot.dat" ) );
         plot3dSlices( corr3d,
-            getS( inMap, "correlation_3d_side_plot_filename", "output_correlation_3d_side_plot.dat" ), 
-            getS( inMap, "correlation_3d_out_plot_filename", "output_correlation_3d_out_plot.dat" ), 
+            getS( inMap, "correlation_3d_side_plot_filename", "output_correlation_3d_side_plot.dat" ),
+            getS( inMap, "correlation_3d_out_plot_filename", "output_correlation_3d_out_plot.dat" ),
             getS( inMap, "correlation_3d_long_plot_filename", "output_correlation_3d_long_plot.dat" )
         );
     }
@@ -369,9 +369,9 @@ void makeSourceMakerSources( vector<COSCARLine> particleList, parameterMap& inMa
     if (make_plots) {
         plot1d( source1d, getS( inMap, "source_1d_plot_filename", "output_source_1d_plot.dat" ));
         cout << endl;
-        plot3dSlices( source3d, 
-            getS( inMap, "source_3d_side_plot_filename", "output_source_3d_side_plot.dat" ), 
-            getS( inMap, "source_3d_out_plot_filename", "output_source_3d_out_plot.dat" ), 
+        plot3dSlices( source3d,
+            getS( inMap, "source_3d_side_plot_filename", "output_source_3d_side_plot.dat" ),
+            getS( inMap, "source_3d_out_plot_filename", "output_source_3d_out_plot.dat" ),
             getS( inMap, "source_3d_long_plot_filename", "output_source_3d_long_plot.dat" ) );
     }
 }

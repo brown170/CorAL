@@ -1,29 +1,29 @@
 // <<BEGIN-copyright>>
-// 
+//
 //                 The GNU General Public License (GPL) Version 2, June 1991
-// 
-// Copyright (c) 2013, Lawrence Livermore National Security, LLC. Produced at the Lawrence 
-// Livermore National Laboratory. Written by Ron Soltz (soltz1@llnl.gov), David A. Brown 
+//
+// Copyright (c) 2013, Lawrence Livermore National Security, LLC. Produced at the Lawrence
+// Livermore National Laboratory. Written by Ron Soltz (soltz1@llnl.gov), David A. Brown
 // (dbrown@bnl.gov) and Scott Pratt (pratts@pa.msu.edu).
-// 
-// CODE-CODE-643336 All rights reserved. 
-// 
+//
+// CODE-CODE-643336 All rights reserved.
+//
 // This file is part of CorAL, Version: 1.17.
-// 
+//
 // Please see the file LICENSE.TXT in the main directory of this source code distribution.
-// 
-// This program is free software; you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License (as published by the Free Software Foundation) version 2, 
+//
+// This program is free software; you can redistribute it and/or modify it under the terms of
+// the GNU General Public License (as published by the Free Software Foundation) version 2,
 // dated June 1991.
-// 
-// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-// without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the terms and conditions of the GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License along with this program; 
-// if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, 
+//
+// You should have received a copy of the GNU General Public License along with this program;
+// if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 // MA 02111-1307 USA
-// 
+//
 // <<END-copyright>>
 #include <iostream>
 #include <fstream>
@@ -86,7 +86,7 @@ int main(int argc, char* argv[]){
 
     cout << "*** Widget to Convert Sources to Correlations (ConvertS2C) using CorAL ***"<<endl;
     cout << endl;
-    
+
     bool got_file = false;
     bool three_d_source=false;
     bool convolve_with_kernel=false;
@@ -109,8 +109,8 @@ int main(int argc, char* argv[]){
             paramFile = sarg;
             got_file = true;
         }
-    }    
-    
+    }
+
     // Read in the input parameters from the argument on the command line
     if (!got_file) {
         MESSAGE<<"No inputFile parameter file given!!"<<ENDM_WARN;
@@ -126,49 +126,49 @@ int main(int argc, char* argv[]){
         parameterMap sourceInMap;
         parameter::ReadParsFromFile(sourceInMap, parameter::getS(inMap,"source_file","input_source.dat"));
         for ( vector<string>::iterator it=modeList.begin(); it!=modeList.end(); ++it)
-        {    
-            if      ( *it == "-legendre" )    { 
-                CSourceFtn3dSphr< CSourceFtn1dLegendrePoly > souIn; 
+        {
+            if      ( *it == "-legendre" )    {
+                CSourceFtn3dSphr< CSourceFtn1dLegendrePoly > souIn;
                 souIn.Read( sourceInMap );
                 souIn.readTerms();
                 UncoupledLegendrePolyImager3d imager;
                 imager.Read( inMap );
                 imager.convertSourceToCorrelation( souIn, answer, inMap );
             }
-            else if ( *it == "-bspline" )     { 
-                CSourceFtn3dSphr< CSourceFtn1dBSpline > souIn; 
+            else if ( *it == "-bspline" )     {
+                CSourceFtn3dSphr< CSourceFtn1dBSpline > souIn;
                 souIn.Read( sourceInMap );
                 souIn.readTerms();
                 UncoupledBasisSplineImager3d imager;
                 imager.Read( inMap );
                 imager.convertSourceToCorrelation( souIn, answer, inMap );
-            } 
-            else if ( *it == "-laguerre" )    { 
-                CSourceFtn3dSphr< CSourceFtn1dLaguerrePoly > souIn; 
+            }
+            else if ( *it == "-laguerre" )    {
+                CSourceFtn3dSphr< CSourceFtn1dLaguerrePoly > souIn;
                 souIn.Read( sourceInMap );
                 souIn.readTerms();
                 UncoupledLaguerrePolyImager3d imager;
                 imager.Read( inMap );
                 imager.convertSourceToCorrelation( souIn, answer, inMap );
             }
-            else if ( *it == "-chebyshev" )   { 
-                CSourceFtn3dSphr< CSourceFtn1dChebyshevPoly > souIn; 
+            else if ( *it == "-chebyshev" )   {
+                CSourceFtn3dSphr< CSourceFtn1dChebyshevPoly > souIn;
                 souIn.Read( sourceInMap );
                 souIn.readTerms();
                 UncoupledChebyshevPolyImager3d imager;
                 imager.Read( inMap );
                 imager.convertSourceToCorrelation( souIn, answer, inMap );
             }
-            else if ( *it == "-histogram" )   { 
-                CSourceFtn3dSphr< CSourceFtn1dHisto > souIn; 
+            else if ( *it == "-histogram" )   {
+                CSourceFtn3dSphr< CSourceFtn1dHisto > souIn;
                 souIn.Read( sourceInMap );
                 souIn.readTerms();
                 UncoupledHistoImager3d imager;
                 imager.Read( inMap );
                 imager.convertSourceToCorrelation( souIn, answer, inMap );
             }
-            else if ( *it == "-hermite" )     { 
-                CSourceFtn3dSphr< CSourceFtn1dHermitePoly > souIn; 
+            else if ( *it == "-hermite" )     {
+                CSourceFtn3dSphr< CSourceFtn1dHermitePoly > souIn;
                 souIn.Read( sourceInMap );
                 souIn.readTerms();
                 UncoupledHermitePolyImager3d imager;
@@ -177,7 +177,7 @@ int main(int argc, char* argv[]){
             }
             else if ( *it == "-gaussian" )    { MESSAGE<<"Not available in 3d: '"<<*it<<"'"<<ENDM_WARN; }
             else  MESSAGE<<"Unknown mode: '"<<*it<<"'"<<ENDM_WARN;
-        }    
+        }
         answer.Write(outMap);
         parameter::WriteParsToFile(outMap, parameter::getS(inMap,"correlation_file","output_correlation.dat"));
         answer.writeTerms();
@@ -185,9 +185,9 @@ int main(int argc, char* argv[]){
     else {
         CCorrFtn1dHisto answer;
         parameterMap outMap;
-        yasper::ptr< CSourceFtnBase > pExpansion; 
+        yasper::ptr< CSourceFtnBase > pExpansion;
         for ( vector<string>::iterator it=modeList.begin(); it!=modeList.end(); ++it)
-        {    
+        {
             if      ( *it == "-legendre" )  { pExpansion = new CSourceFtn1dLegendrePoly; }
             else if ( *it == "-bspline" )   { pExpansion = new CSourceFtn1dBSpline; }
             else if ( *it == "-laguerre" )  { pExpansion = new CSourceFtn1dLaguerrePoly; }
@@ -212,6 +212,5 @@ int main(int argc, char* argv[]){
         answer.Write(outMap);
         parameter::WriteParsToFile(outMap, parameter::getS(inMap,"correlation_file","output_correlation.dat"));
     }
-    return true;
+    return 0;
 }
-    
