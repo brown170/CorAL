@@ -1,29 +1,29 @@
 // <<BEGIN-copyright>>
-// 
+//
 //                 The GNU General Public License (GPL) Version 2, June 1991
-// 
-// Copyright (c) 2013, Lawrence Livermore National Security, LLC. Produced at the Lawrence 
-// Livermore National Laboratory. Written by Ron Soltz (soltz1@llnl.gov), David A. Brown 
+//
+// Copyright (c) 2013, Lawrence Livermore National Security, LLC. Produced at the Lawrence
+// Livermore National Laboratory. Written by Ron Soltz (soltz1@llnl.gov), David A. Brown
 // (dbrown@bnl.gov) and Scott Pratt (pratts@pa.msu.edu).
-// 
-// CODE-CODE-643336 All rights reserved. 
-// 
+//
+// CODE-CODE-643336 All rights reserved.
+//
 // This file is part of CorAL, Version: 1.17.
-// 
+//
 // Please see the file LICENSE.TXT in the main directory of this source code distribution.
-// 
-// This program is free software; you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License (as published by the Free Software Foundation) version 2, 
+//
+// This program is free software; you can redistribute it and/or modify it under the terms of
+// the GNU General Public License (as published by the Free Software Foundation) version 2,
 // dated June 1991.
-// 
-// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-// without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the terms and conditions of the GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License along with this program; 
-// if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, 
+//
+// You should have received a copy of the GNU General Public License along with this program;
+// if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 // MA 02111-1307 USA
-// 
+//
 // <<END-copyright>>
 #include <iostream>
 #include <fstream>
@@ -65,10 +65,10 @@ class CBFPLOTIntegrand{
     CKernel* pKernel;
     int index, l;
     double q;
-    static double f( void* instance, double r ){ 
+    static double f( void* instance, double r ){
         CBFPLOTIntegrand* inst = static_cast< CBFPLOTIntegrand* >(instance);
-        return 4.0 * PI * r * r * 
-               inst->pKernel->GetValue( inst->l, inst->q, r ) * 
+        return 4.0 * PI * r * r *
+               inst->pKernel->GetValue( inst->l, inst->q, r ) *
                inst->pExpansion->basisFunction( r, inst->index );
     }
 };
@@ -99,7 +99,7 @@ int main(int argc, char* argv[]){
 
     cout << "*** Widget to PLOT the Basis Functions (BFPLOT) using CorAL ***"<<endl;
     cout << endl;
-    
+
     bool got_file = false;
     bool convolve_with_kernel=false;
 
@@ -120,8 +120,8 @@ int main(int argc, char* argv[]){
             paramFile = sarg;
             got_file = true;
         }
-    }    
-    
+    }
+
     // Read in the input parameters from the argument on the command line
     if (!got_file) {
         MESSAGE<<"No inputFile parameter file given!!"<<ENDM_WARN;
@@ -130,9 +130,9 @@ int main(int argc, char* argv[]){
     parameterMap inMap;
     parameter::ReadParsFromFile(inMap, paramFile);
 
-    yasper::ptr<CBasisFunctionExpansion1d> pExpansion; 
+    yasper::ptr<CBasisFunctionExpansion1d> pExpansion;
     for ( vector<string>::iterator it=modeList.begin(); it!=modeList.end(); ++it)
-    {    
+    {
         if      ( *it == "-legendre" )  { pExpansion = new CLegendrePolynomialExpansion1d; }
         else if ( *it == "-bspline" )   { pExpansion = new CBasisSpline1d; }
         else if ( *it == "-laguerre" )  { pExpansion = new CLaguerrePolynomialExpansion1d; }
@@ -140,10 +140,10 @@ int main(int argc, char* argv[]){
         else if ( *it == "-histogram" ) { pExpansion = new CHistogram1d; }
         else if ( *it == "-hermite" )   { pExpansion = new CHermiteFunctionExpansion1d; }
         else  MESSAGE<<"Unknown mode: '"<<*it<<ENDM_WARN;
-    }    
+    }
     pExpansion->Read( inMap );
     plotSource( pExpansion, inMap );
-    
+
     if (inMap.hasKey("particle1")&&inMap.hasKey("particle2")&&inMap.hasKey("param_filename")&&convolve_with_kernel) {
         string p1 = parameter::getS(inMap, "particle1", "pi+");
         string p2 = parameter::getS(inMap, "particle2", "pi+");
@@ -151,9 +151,9 @@ int main(int argc, char* argv[]){
         plotCorrelation( pExpansion, pKernel, inMap );
     }
 
-    return true;
+    return 0;
 }
-    
+
 // ------------- plotSource -------------
 void plotSource( yasper::ptr< CBasisFunctionExpansion1d > pExpansion, const parameterMap& inMap ){
     string outFile = parameter::getS(inMap,"basis_func_plot_file","output_r_basis_funcs.dat");
@@ -189,4 +189,3 @@ void plotCorrelation( yasper::ptr< CBasisFunctionExpansion1d > pExpansion, CKern
     }
 
 }
-
