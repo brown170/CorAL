@@ -11,7 +11,7 @@ extern "C" {
 /* Subroutine */ int drlhre_(integer *ndim, doublereal *center, doublereal *
 	hwidth, integer *wtleng, doublereal *g, doublereal *w, doublereal *
 	errcof, integer *numfun, S_fp funsub, doublereal *scales, doublereal *
-	norms, doublereal *x, doublereal *null, doublereal *basval, 
+	norms, doublereal *x, doublereal *null, doublereal *basval,
 	doublereal *rgnerr, doublereal *direct)
 {
     /* System generated locals */
@@ -22,7 +22,7 @@ extern "C" {
     static integer i__, j, k;
     static doublereal ratio, search, difmax;
     extern /* Subroutine */ int dfshre_(integer *, doublereal *, doublereal *,
-	     doublereal *, doublereal *, integer *, S_fp, doublereal *, 
+	     doublereal *, doublereal *, integer *, S_fp, doublereal *,
 	    doublereal *);
     static doublereal frthdf, difsum;
     static integer divaxn;
@@ -190,24 +190,24 @@ extern "C" {
 	difsum = 0.;
 	i__2 = *numfun;
 	for (j = 1; j <= i__2; ++j) {
-	    frthdf = (1 - ratio) * 2 * rgnerr[j] - (null[j + null_dim1 * 7] + 
-		    null[j + (null_dim1 << 3)]) + ratio * (null[j + null_dim1 
+	    frthdf = (1 - ratio) * 2 * rgnerr[j] - (null[j + null_dim1 * 7] +
+		    null[j + (null_dim1 << 3)]) + ratio * (null[j + null_dim1
 		    * 5] + null[j + null_dim1 * 6]);
 
 /*           Ignore differences below roundoff */
 
 	    if (rgnerr[j] + frthdf / 4 != rgnerr[j]) {
-		difsum += abs(frthdf);
+		     difsum += ABS(frthdf);
 	    }
 	    for (k = 1; k <= 4; ++k) {
-		null[j + k * null_dim1] = null[j + k * null_dim1] + w[k + 11] 
-			* (null[j + null_dim1 * 5] + null[j + null_dim1 * 6]) 
+		null[j + k * null_dim1] = null[j + k * null_dim1] + w[k + 11]
+			* (null[j + null_dim1 * 5] + null[j + null_dim1 * 6])
 			+ w[k + 16] * (null[j + null_dim1 * 7] + null[j + (
 			null_dim1 << 3)]);
 /* L40: */
 	    }
-	    basval[j] = basval[j] + w[11] * (null[j + null_dim1 * 5] + null[j 
-		    + null_dim1 * 6]) + w[16] * (null[j + null_dim1 * 7] + 
+	    basval[j] = basval[j] + w[11] * (null[j + null_dim1 * 5] + null[j
+		    + null_dim1 * 6]) + w[16] * (null[j + null_dim1 * 7] +
 		    null[j + (null_dim1 << 3)]);
 /* L50: */
 	}
@@ -223,7 +223,7 @@ extern "C" {
 
     i__1 = *wtleng;
     for (i__ = 4; i__ <= i__1; ++i__) {
-	dfshre_(ndim, &center[1], &hwidth[1], &x[1], &g[i__ * g_dim1 + 1], 
+	dfshre_(ndim, &center[1], &hwidth[1], &x[1], &g[i__ * g_dim1 + 1],
 		numfun, (S_fp)funsub, &rgnerr[1], &null[null_dim1 * 5 + 1]);
 	i__2 = *numfun;
 	for (j = 1; j <= i__2; ++j) {
@@ -252,22 +252,22 @@ extern "C" {
 	    i__2 = *wtleng;
 	    for (k = 1; k <= i__2; ++k) {
 /* Computing MAX */
-		d__2 = search, d__3 = (d__1 = null[j + (i__ + 1) * null_dim1] 
-			+ scales[i__ + k * 3] * null[j + i__ * null_dim1], 
-			abs(d__1)) * norms[i__ + k * 3];
+		d__2 = search, d__3 = (d__1 = null[j + (i__ + 1) * null_dim1]
+			+ scales[i__ + k * 3] * null[j + i__ * null_dim1],
+			ABS(d__1)) * norms[i__ + k * 3];
 		search = max(d__2,d__3);
 /* L100: */
 	    }
 	    null[j + i__ * null_dim1] = search;
 /* L110: */
 	}
-	if (errcof[1] * null[j + null_dim1] <= null[j + (null_dim1 << 1)] && 
+	if (errcof[1] * null[j + null_dim1] <= null[j + (null_dim1 << 1)] &&
 		errcof[2] * null[j + (null_dim1 << 1)] <= null[j + null_dim1 *
 		 3]) {
 	    rgnerr[j] = errcof[3] * null[j + null_dim1];
 	} else {
 /* Computing MAX */
-	    d__1 = null[j + null_dim1], d__2 = null[j + (null_dim1 << 1)], 
+	    d__1 = null[j + null_dim1], d__2 = null[j + (null_dim1 << 1)],
 		    d__1 = max(d__1,d__2), d__2 = null[j + null_dim1 * 3];
 	    rgnerr[j] = errcof[4] * max(d__1,d__2);
 	}

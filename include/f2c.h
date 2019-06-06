@@ -154,8 +154,8 @@ struct Namelist {
 	};
 typedef struct Namelist Namelist;
 
-#define abs(x) ((x) >= 0 ? (x) : -(x))
-#define dabs(x) (doublereal)abs(x)
+#define ABS(x) ((x) >= 0 ? (x) : -(x))
+#define dabs(x) (doublereal)ABS(x)
 #define min(a,b) ((a) <= (b) ? (a) : (b))
 #define max(a,b) ((a) >= (b) ? (a) : (b))
 #define dmin(a,b) (doublereal)min(a,b)
