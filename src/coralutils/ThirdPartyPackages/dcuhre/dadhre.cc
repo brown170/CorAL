@@ -13,21 +13,21 @@ extern "C" {
 static integer c__2 = 2;
 static integer c__1 = 1;
 
-/* Subroutine */ int dadhre_(integer *ndim, integer *numfun, integer *mdiv, 
-	doublereal *a, doublereal *b, integer *minsub, integer *maxsub, U_fp 
-	funsub, doublereal *epsabs, doublereal *epsrel, integer *key, integer 
+/* Subroutine */ int dadhre_(integer *ndim, integer *numfun, integer *mdiv,
+	doublereal *a, doublereal *b, integer *minsub, integer *maxsub, U_fp
+	funsub, doublereal *epsabs, doublereal *epsrel, integer *key, integer
 	*restar, integer *num, integer *lenw, integer *wtleng, doublereal *
 	result, doublereal *abserr, integer *neval, integer *nsub, integer *
-	ifail, doublereal *values, doublereal *errors, doublereal *centrs, 
+	ifail, doublereal *values, doublereal *errors, doublereal *centrs,
 	doublereal *hwidts, doublereal *greate, doublereal *dir, doublereal *
 	oldres, doublereal *work, doublereal *g, doublereal *w, doublereal *
-	rulpts, doublereal *center, doublereal *hwidth, doublereal *x, 
+	rulpts, doublereal *center, doublereal *hwidth, doublereal *x,
 	doublereal *scales, doublereal *norms)
 {
     /* System generated locals */
-    integer values_dim1, values_offset, errors_dim1, errors_offset, 
-	    centrs_dim1, centrs_offset, hwidts_dim1, hwidts_offset, 
-	    oldres_dim1, oldres_offset, g_dim1, g_dim2, g_offset, x_dim1, 
+    integer values_dim1, values_offset, errors_dim1, errors_offset,
+	    centrs_dim1, centrs_offset, hwidts_dim1, hwidts_offset,
+	    oldres_dim1, oldres_offset, g_dim1, g_dim2, g_offset, x_dim1,
 	    x_offset, i__1, i__2, i__3;
     doublereal d__1;
 
@@ -36,17 +36,17 @@ static integer c__1 = 1;
     static doublereal est1, est2;
     static integer ndiv, index;
     static doublereal oldcen;
-    extern /* Subroutine */ int dinhre_(integer *, integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
+    extern /* Subroutine */ int dinhre_(integer *, integer *, integer *,
+	    doublereal *, doublereal *, doublereal *, doublereal *,
 	    doublereal *, doublereal *);
     static integer direct;
     static doublereal errcof[6];
     extern /* Subroutine */ int drlhre_(integer *, doublereal *, doublereal *,
-	     integer *, doublereal *, doublereal *, doublereal *, integer *, 
-	    U_fp, doublereal *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *), dtrhre_(integer *, 
-	    integer *, integer *, integer *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, 
+	     integer *, doublereal *, doublereal *, doublereal *, integer *,
+	    U_fp, doublereal *, doublereal *, doublereal *, doublereal *,
+	    doublereal *, doublereal *, doublereal *), dtrhre_(integer *,
+	    integer *, integer *, integer *, doublereal *, doublereal *,
+	    doublereal *, doublereal *, doublereal *, doublereal *,
 	    doublereal *, doublereal *, doublereal *, doublereal *);
     static integer intsgn, sbrgns, pointr;
 
@@ -304,7 +304,7 @@ static integer c__1 = 1;
     i__1 = *ndim;
     for (j = 1; j <= i__1; ++j) {
 	centrs[j + centrs_dim1] = (a[j] + b[j]) / 2;
-	hwidts[j + hwidts_dim1] = (d__1 = b[j] - a[j], abs(d__1)) / 2;
+	hwidts[j + hwidts_dim1] = (d__1 = b[j] - a[j], ABS(d__1)) / 2;
 /* L15: */
     }
 
@@ -320,7 +320,7 @@ static integer c__1 = 1;
 
 /*   Apply DRLHRE over the whole region. */
 
-    drlhre_(ndim, &centrs[centrs_dim1 + 1], &hwidts[hwidts_dim1 + 1], wtleng, 
+    drlhre_(ndim, &centrs[centrs_dim1 + 1], &hwidts[hwidts_dim1 + 1], wtleng,
 	    &g[g_offset], &w[6], errcof, numfun, (U_fp)funsub, &scales[4], &
 	    norms[4], &x[x_offset], &work[1], &values[values_dim1 + 1], &
 	    errors[errors_dim1 + 1], &dir[1]);
@@ -395,17 +395,17 @@ L110:
 	    }
 	    direct = (integer) dir[1];
 	    dir[pointr] = (doublereal) direct;
-	    hwidts[direct + pointr * hwidts_dim1] = hwidts[direct + 
+	    hwidts[direct + pointr * hwidts_dim1] = hwidts[direct +
 		    hwidts_dim1] / 2;
 	    oldcen = centrs[direct + centrs_dim1];
-	    centrs[direct + pointr * centrs_dim1] = oldcen - hwidts[direct + 
+	    centrs[direct + pointr * centrs_dim1] = oldcen - hwidts[direct +
 		    pointr * hwidts_dim1];
 
 /*   Save the computed values of the integrals. */
 
 	    i__2 = *numfun;
 	    for (j = 1; j <= i__2; ++j) {
-		oldres[j + (ndiv - i__ + 1) * oldres_dim1] = values[j + 
+		oldres[j + (ndiv - i__ + 1) * oldres_dim1] = values[j +
 			values_dim1];
 /* L125: */
 	    }
@@ -414,22 +414,22 @@ L110:
 
 	    dtrhre_(&c__1, ndim, numfun, &sbrgns, &values[values_offset], &
 		    errors[errors_offset], &centrs[centrs_offset], &hwidts[
-		    hwidts_offset], &greate[1], &work[1], &work[*numfun + 1], 
+		    hwidts_offset], &greate[1], &work[1], &work[*numfun + 1],
 		    &center[1], &hwidth[1], &dir[1]);
 
 /*   Compute second half region. */
 
 	    i__2 = *ndim;
 	    for (j = 1; j <= i__2; ++j) {
-		centrs[j + (pointr - 1) * centrs_dim1] = centrs[j + pointr * 
+		centrs[j + (pointr - 1) * centrs_dim1] = centrs[j + pointr *
 			centrs_dim1];
-		hwidts[j + (pointr - 1) * hwidts_dim1] = hwidts[j + pointr * 
+		hwidts[j + (pointr - 1) * hwidts_dim1] = hwidts[j + pointr *
 			hwidts_dim1];
 /* L130: */
 	    }
 	    centrs[direct + (pointr - 1) * centrs_dim1] = oldcen + hwidts[
 		    direct + pointr * hwidts_dim1];
-	    hwidts[direct + (pointr - 1) * hwidts_dim1] = hwidts[direct + 
+	    hwidts[direct + (pointr - 1) * hwidts_dim1] = hwidts[direct +
 		    pointr * hwidts_dim1];
 	    dir[pointr - 1] = (doublereal) direct;
 /* L150: */
@@ -443,7 +443,7 @@ L110:
 	    for (j = 1; j <= i__2; ++j) {
 		i__3 = *wtleng;
 		for (k = 1; k <= i__3; ++k) {
-		    g[j + (k + i__ * g_dim2) * g_dim1] = g[j + (k + g_dim2) * 
+		    g[j + (k + i__ * g_dim2) * g_dim1] = g[j + (k + g_dim2) *
 			    g_dim1];
 /* L190: */
 		}
@@ -457,8 +457,8 @@ L110:
 	for (i__ = 1; i__ <= i__3; ++i__) {
 	    index = sbrgns + i__;
 	    l1 = (i__ - 1 << 3) * *numfun + 1;
-	    drlhre_(ndim, &centrs[index * centrs_dim1 + 1], &hwidts[index * 
-		    hwidts_dim1 + 1], wtleng, &g[(i__ * g_dim2 + 1) * g_dim1 
+	    drlhre_(ndim, &centrs[index * centrs_dim1 + 1], &hwidts[index *
+		    hwidts_dim1 + 1], wtleng, &g[(i__ * g_dim2 + 1) * g_dim1
 		    + 1], &w[6], errcof, numfun, (U_fp)funsub, &scales[4], &
 		    norms[4], &x[i__ * x_dim1 + 1], &work[l1], &values[index *
 		     values_dim1 + 1], &errors[index * errors_dim1 + 1], &dir[
@@ -490,11 +490,11 @@ L110:
 	    for (j = 1; j <= i__2; ++j) {
 		est1 = (d__1 = oldres[j + i__ * oldres_dim1] - (values[j + (
 			sbrgns + (i__ << 1) - 1) * values_dim1] + values[j + (
-			sbrgns + (i__ << 1)) * values_dim1]), abs(d__1));
-		est2 = errors[j + (sbrgns + (i__ << 1) - 1) * errors_dim1] + 
+			sbrgns + (i__ << 1)) * values_dim1]), ABS(d__1));
+		est2 = errors[j + (sbrgns + (i__ << 1) - 1) * errors_dim1] +
 			errors[j + (sbrgns + (i__ << 1)) * errors_dim1];
 		if (est2 > 0.) {
-		    errors[j + (sbrgns + (i__ << 1) - 1) * errors_dim1] *= 
+		    errors[j + (sbrgns + (i__ << 1) - 1) * errors_dim1] *=
 			    errcof[4] * est1 / est2 + 1;
 		    errors[j + (sbrgns + (i__ << 1)) * errors_dim1] *= errcof[
 			    4] * est1 / est2 + 1;
@@ -503,7 +503,7 @@ L110:
 			5] * est1;
 		errors[j + (sbrgns + (i__ << 1)) * errors_dim1] += errcof[5] *
 			 est1;
-		if (errors[j + (sbrgns + (i__ << 1) - 1) * errors_dim1] > 
+		if (errors[j + (sbrgns + (i__ << 1) - 1) * errors_dim1] >
 			greate[sbrgns + (i__ << 1) - 1]) {
 		    greate[sbrgns + (i__ << 1) - 1] = errors[j + (sbrgns + (
 			    i__ << 1) - 1) * errors_dim1];
@@ -514,7 +514,7 @@ L110:
 			     1)) * errors_dim1];
 		}
 		abserr[j] = abserr[j] + errors[j + (sbrgns + (i__ << 1) - 1) *
-			 errors_dim1] + errors[j + (sbrgns + (i__ << 1)) * 
+			 errors_dim1] + errors[j + (sbrgns + (i__ << 1)) *
 			errors_dim1];
 /* L230: */
 	    }
@@ -528,7 +528,7 @@ L110:
 	    index = sbrgns + i__;
 	    dtrhre_(&c__2, ndim, numfun, &index, &values[values_offset], &
 		    errors[errors_offset], &centrs[centrs_offset], &hwidts[
-		    hwidts_offset], &greate[1], &work[1], &work[*numfun + 1], 
+		    hwidts_offset], &greate[1], &work[1], &work[*numfun + 1],
 		    &center[1], &hwidth[1], &dir[1]);
 /* L250: */
 	}
@@ -541,7 +541,7 @@ L110:
 	}
 	i__3 = *numfun;
 	for (j = 1; j <= i__3; ++j) {
-	    if (abserr[j] > *epsrel * (d__1 = result[j], abs(d__1)) && abserr[
+	    if (abserr[j] > *epsrel * (d__1 = result[j], ABS(d__1)) && abserr[
 		    j] > *epsabs) {
 		goto L110;
 	    }

@@ -1,40 +1,40 @@
 # <<BEGIN-copyright>>
-# 
+#
 #                 The GNU General Public License (GPL) Version 2, June 1991
-# 
-# Copyright (c) 2013, Lawrence Livermore National Security, LLC. Produced at the Lawrence 
-# Livermore National Laboratory. Written by Ron Soltz (soltz1@llnl.gov), David A. Brown 
+#
+# Copyright (c) 2013, Lawrence Livermore National Security, LLC. Produced at the Lawrence
+# Livermore National Laboratory. Written by Ron Soltz (soltz1@llnl.gov), David A. Brown
 # (dbrown@bnl.gov) and Scott Pratt (pratts@pa.msu.edu).
-# 
-# CODE-CODE-643336 All rights reserved. 
-# 
+#
+# CODE-CODE-643336 All rights reserved.
+#
 # This file is part of CorAL, Version: 1.17.
-# 
+#
 # Please see the file LICENSE.TXT in the main directory of this source code distribution.
-# 
-# This program is free software; you can redistribute it and/or modify it under the terms of 
-# the GNU General Public License (as published by the Free Software Foundation) version 2, 
+#
+# This program is free software; you can redistribute it and/or modify it under the terms of
+# the GNU General Public License (as published by the Free Software Foundation) version 2,
 # dated June 1991.
-# 
-# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-# without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+# without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the terms and conditions of the GNU General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License along with this program; 
-# if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, 
+#
+# You should have received a copy of the GNU General Public License along with this program;
+# if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 # MA 02111-1307 USA
-# 
+#
 # <<END-copyright>>
 import sys,os
 
-if os.environ.has_key("CORAL_GSLPATH"):gslpath = os.environ['CORAL_GSLPATH']
-else:                                  gslpath = "/opt/local/"
-if os.environ.has_key("CORAL_X11PATH"):x11path = os.environ['CORAL_X11PATH']
-else:                                  x11path = "/opt/local/"
-if os.environ.has_key("CORAL_HOME"): coralhome = os.environ['CORAL_HOME']
-else:                                coralhome = os.getcwd()
-if os.environ.has_key("CORAL_CCFLAGS"):ccflags = os.environ['CORAL_CCFLAGS']
-else:                                  ccflags = ""
+if "CORAL_GSLPATH" in os.environ: gslpath = os.environ['CORAL_GSLPATH']
+else:                             gslpath = "/opt/local/"
+if "CORAL_X11PATH" in os.environ: x11path = os.environ['CORAL_X11PATH']
+else:                             x11path = "/opt/local/"
+if "CORAL_HOME" in os.environ: coralhome = os.environ['CORAL_HOME']
+else:                          coralhome = os.getcwd()
+if "CORAL_CCFLAGS" in os.environ: ccflags = os.environ['CORAL_CCFLAGS']
+else:                             ccflags = ""
 ccflags += " -Df2cFortran -ansi"
 
 opts = Variables()
@@ -61,7 +61,7 @@ if coralenv['debug']: coralenv['CCFLAGS'] += " -Wall -g -DTNT_BOUNDS_CHECK"
 SConscript('src/coralutils/SConscript', exports='coralenv', variant_dir='#build/coralutils', duplicate=0)
 SConscript('src/coral/SConscript', exports='coralenv', variant_dir='#build/coral', duplicate=0)
 
-#if coralenv['X11']: 
+#if coralenv['X11']:
 #    coralenv[ 'CPPPATH' ] += [ x11path+'include' ]
 #    coralenv[ 'LIBPATH' ] += [ x11path+'lib' ]
 #    coralenv[ 'LIBS' ]    += [ 'X11']  # for some reason, adding to this list on MacOSX messes up CheckLib calls later
@@ -91,10 +91,9 @@ SConscript('src/scplot/SConscript', exports='coralenv', variant_dir='#build/scpl
 SConscript('src/converts2c/SConscript', exports='coralenv', variant_dir='#build/converts2c', duplicate=0)
 
 # --------------- Build regression tests ---------------
-if coralenv['tests']: 
+if coralenv['tests']:
     SConscript( 'codetests/SConscript', exports = 'coralenv', variant_dir = '#build/tests', duplicate = 0 )
 
 # --------------- Build documentation ---------------
-if coralenv['doc']: 
+if coralenv['doc']:
     SConscript( 'doc/SConscript', exports = 'coralenv', variant_dir = '#build/doc', duplicate = 0 )
-

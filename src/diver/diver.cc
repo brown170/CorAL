@@ -1,29 +1,29 @@
 // <<BEGIN-copyright>>
-// 
+//
 //                 The GNU General Public License (GPL) Version 2, June 1991
-// 
-// Copyright (c) 2013, Lawrence Livermore National Security, LLC. Produced at the Lawrence 
-// Livermore National Laboratory. Written by Ron Soltz (soltz1@llnl.gov), David A. Brown 
+//
+// Copyright (c) 2013, Lawrence Livermore National Security, LLC. Produced at the Lawrence
+// Livermore National Laboratory. Written by Ron Soltz (soltz1@llnl.gov), David A. Brown
 // (dbrown@bnl.gov) and Scott Pratt (pratts@pa.msu.edu).
-// 
-// CODE-CODE-643336 All rights reserved. 
-// 
+//
+// CODE-CODE-643336 All rights reserved.
+//
 // This file is part of CorAL, Version: 1.17.
-// 
+//
 // Please see the file LICENSE.TXT in the main directory of this source code distribution.
-// 
-// This program is free software; you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License (as published by the Free Software Foundation) version 2, 
+//
+// This program is free software; you can redistribute it and/or modify it under the terms of
+// the GNU General Public License (as published by the Free Software Foundation) version 2,
 // dated June 1991.
-// 
-// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-// without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the terms and conditions of the GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License along with this program; 
-// if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, 
+//
+// You should have received a copy of the GNU General Public License along with this program;
+// if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 // MA 02111-1307 USA
-// 
+//
 // <<END-copyright>>
 #include <fstream>
 #include <iostream>
@@ -57,7 +57,7 @@ void getHelp(void){
     cout<<"        \"-laguerre\"   : Use Laguerre polynomial basis for source"<<endl;
     cout<<"        \"-legendre\"   : Use Legendre polynomial basis for source"<<endl;
     cout<<"        \"-norestore\"  : Don't restore the correlation"<<endl;
-    cout<<"        \"-restore\"    : Restore the correlation"<<endl;  
+    cout<<"        \"-restore\"    : Restore the correlation"<<endl;
     cout<<"        \"-1d\"         : Problem is 1d"<<endl;
     cout<<"        \"-3d\"         : Problem is 3d"<<endl;
     exit(0);
@@ -93,7 +93,7 @@ int main( int argc,  char* argv[] ){
     }
     if ( !got_file ) throw MESSAGE << "No imput file specified. Halting!!"<<ENDM_FATAL;
     if ( !file_exists( inFile ) ) throw MESSAGE << "File "<< inFile <<" not found. Halting!!"<<ENDM_FATAL;
-   
+
     // Define & initialize the variables
     parameterMap settings, input_correlation_settings, imaged_source_settings, restored_correlation_settings;
     parameter::ReadParsFromFile(settings, inFile);
@@ -117,29 +117,29 @@ int main( int argc,  char* argv[] ){
         yasper::ptr< CSourceFtnBase > pSource;
         yasper::ptr< CGeneralImager3d > pImager;
         for ( vector<string>::iterator it=modeList.begin(); it!=modeList.end(); ++it ) {
-            if      ( *it == "-legendre" )  { 
-                pSource = new CSourceFtn3dSphr< CSourceFtn1dLegendrePoly >; 
-                pImager = new UncoupledLegendrePolyImager3d; 
+            if      ( *it == "-legendre" )  {
+                pSource = new CSourceFtn3dSphr< CSourceFtn1dLegendrePoly >;
+                pImager = new UncoupledLegendrePolyImager3d;
             }
-            else if ( *it == "-bspline" )   { 
-                pSource = new CSourceFtn3dSphr< CSourceFtn1dBSpline >; 
-                pImager = new UncoupledBasisSplineImager3d; 
+            else if ( *it == "-bspline" )   {
+                pSource = new CSourceFtn3dSphr< CSourceFtn1dBSpline >;
+                pImager = new UncoupledBasisSplineImager3d;
             }
-            else if ( *it == "-laguerre" )  { 
-                pSource = new CSourceFtn3dSphr< CSourceFtn1dLaguerrePoly >; 
-                pImager = new UncoupledLaguerrePolyImager3d; 
+            else if ( *it == "-laguerre" )  {
+                pSource = new CSourceFtn3dSphr< CSourceFtn1dLaguerrePoly >;
+                pImager = new UncoupledLaguerrePolyImager3d;
             }
-            else if ( *it == "-chebyshev" ) { 
-                pSource = new CSourceFtn3dSphr< CSourceFtn1dChebyshevPoly >; 
-                pImager = new UncoupledChebyshevPolyImager3d; 
+            else if ( *it == "-chebyshev" ) {
+                pSource = new CSourceFtn3dSphr< CSourceFtn1dChebyshevPoly >;
+                pImager = new UncoupledChebyshevPolyImager3d;
             }
-            else if ( *it == "-histogram" ) { 
-                pSource = new CSourceFtn3dSphr< CSourceFtn1dHisto >; 
-                pImager = new UncoupledHistoImager3d; 
+            else if ( *it == "-histogram" ) {
+                pSource = new CSourceFtn3dSphr< CSourceFtn1dHisto >;
+                pImager = new UncoupledHistoImager3d;
             }
-            else if ( *it == "-hermite" )   { 
-                pSource = new CSourceFtn3dSphr< CSourceFtn1dHermitePoly >; 
-                pImager = new UncoupledHermitePolyImager3d; 
+            else if ( *it == "-hermite" )   {
+                pSource = new CSourceFtn3dSphr< CSourceFtn1dHermitePoly >;
+                pImager = new UncoupledHermitePolyImager3d;
             }
             else if ( *it == "-3d" || *it == "-restore" || *it == "-norestore" ) {}
             else  MESSAGE<<"Unknown mode: '"<<*it<<ENDM_WARN;
@@ -147,7 +147,7 @@ int main( int argc,  char* argv[] ){
         // Set up the source and the imager
         cout << "Initializing 3d source ..."<<endl;
         pSource->Read( parameter::getMap( settings, "source_settings" ) );
-    
+
         // Image & restore
         cout << "Imaging source ..."<<endl;
         pImager->convertCorrelationToSource( corrin, *pSource, settings );
@@ -157,7 +157,7 @@ int main( int argc,  char* argv[] ){
             pImager->convertSourceToCorrelation( *pSource, corrout, settings );
             corrout.Write( restored_correlation_settings );
         }
-     } 
+     }
     else {
         cout << "Reading 1d correlation ..."<<endl;
         // Define the input and output correlations
@@ -172,29 +172,29 @@ int main( int argc,  char* argv[] ){
         yasper::ptr< CSourceFtnBase > pSource;
         yasper::ptr< CBasisFuncImager1d > pImager;
         for ( vector<string>::iterator it=modeList.begin(); it!=modeList.end(); ++it ) {
-            if      ( *it == "-legendre" )  { 
-                pSource = new CSourceFtn1dLegendrePoly; 
-                pImager = new CBasisFuncImager1d; 
+            if      ( *it == "-legendre" )  {
+                pSource = new CSourceFtn1dLegendrePoly;
+                pImager = new CBasisFuncImager1d;
             }
-            else if ( *it == "-bspline" )   { 
-                pSource = new CSourceFtn1dBSpline; 
-                pImager = new CBasisSplineImager1d; 
+            else if ( *it == "-bspline" )   {
+                pSource = new CSourceFtn1dBSpline;
+                pImager = new CBasisSplineImager1d;
             }
-            else if ( *it == "-laguerre" )  { 
-                pSource = new CSourceFtn1dLaguerrePoly; 
-                pImager = new CBasisFuncImager1d; 
+            else if ( *it == "-laguerre" )  {
+                pSource = new CSourceFtn1dLaguerrePoly;
+                pImager = new CBasisFuncImager1d;
             }
-            else if ( *it == "-chebyshev" ) { 
-                pSource = new CSourceFtn1dChebyshevPoly; 
-                pImager = new CBasisFuncImager1d; 
+            else if ( *it == "-chebyshev" ) {
+                pSource = new CSourceFtn1dChebyshevPoly;
+                pImager = new CBasisFuncImager1d;
             }
-            else if ( *it == "-histogram" ) { 
-                pSource = new CSourceFtn1dHisto; 
-                pImager = new CBasisFuncImager1d; 
+            else if ( *it == "-histogram" ) {
+                pSource = new CSourceFtn1dHisto;
+                pImager = new CBasisFuncImager1d;
             }
-            else if ( *it == "-hermite" )   { 
-                pSource = new CSourceFtn1dHermitePoly; 
-                pImager = new CBasisFuncImager1d; 
+            else if ( *it == "-hermite" )   {
+                pSource = new CSourceFtn1dHermitePoly;
+                pImager = new CBasisFuncImager1d;
             }
             else if ( *it == "-1d" || *it == "-restore" || *it == "-norestore" ) {}
             else  MESSAGE<<"Unknown mode: '"<<*it<<ENDM_WARN;
@@ -203,7 +203,7 @@ int main( int argc,  char* argv[] ){
         // Set up the source and the imager
         cout << "Initializing 1d source ..."<<endl;
         pSource->Read( parameter::getMap( settings, "source_settings" ) );
-    
+
         // Image & restore
         cout << "Imaging source ..."<<endl;
         pImager->convertCorrelationToSource( corrin, *pSource, settings );
@@ -215,10 +215,10 @@ int main( int argc,  char* argv[] ){
             corrout.Write( restored_correlation_settings );
         }
     }
-    
+
     // Write out the results to disk
     parameter::WriteParsToFile( imaged_source_settings, source_filename );
     if (restore) parameter::WriteParsToFile( restored_correlation_settings, restored_correlation_filename );
-    
-    return true;
+
+    return 0;
 }

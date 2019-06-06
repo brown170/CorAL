@@ -1,29 +1,29 @@
 // <<BEGIN-copyright>>
-// 
+//
 //                 The GNU General Public License (GPL) Version 2, June 1991
-// 
-// Copyright (c) 2013, Lawrence Livermore National Security, LLC. Produced at the Lawrence 
-// Livermore National Laboratory. Written by Ron Soltz (soltz1@llnl.gov), David A. Brown 
+//
+// Copyright (c) 2013, Lawrence Livermore National Security, LLC. Produced at the Lawrence
+// Livermore National Laboratory. Written by Ron Soltz (soltz1@llnl.gov), David A. Brown
 // (dbrown@bnl.gov) and Scott Pratt (pratts@pa.msu.edu).
-// 
-// CODE-CODE-643336 All rights reserved. 
-// 
+//
+// CODE-CODE-643336 All rights reserved.
+//
 // This file is part of CorAL, Version: 1.17.
-// 
+//
 // Please see the file LICENSE.TXT in the main directory of this source code distribution.
-// 
-// This program is free software; you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License (as published by the Free Software Foundation) version 2, 
+//
+// This program is free software; you can redistribute it and/or modify it under the terms of
+// the GNU General Public License (as published by the Free Software Foundation) version 2,
 // dated June 1991.
-// 
-// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-// without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the terms and conditions of the GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License along with this program; 
-// if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, 
+//
+// You should have received a copy of the GNU General Public License along with this program;
+// if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 // MA 02111-1307 USA
-// 
+//
 // <<END-copyright>>
 #include <iostream>
 #include <fstream>
@@ -86,7 +86,7 @@ int main(int argc, char* argv[]){
     cout << "*** Widget to PLOT Sources and Correlation (SCPLOT) using CorAL ***"<<endl;
     cout << "            (we need a catchy name for this code) "<<endl;
     cout << endl;
-    
+
     bool got_file = false;
     bool is_3dsphr_object = false;
     bool is_3dcarthisto_object = false;
@@ -107,8 +107,8 @@ int main(int argc, char* argv[]){
             paramFile = sarg;
             got_file = true;
         }
-    }    
-    
+    }
+
     // Read in the input parameters from the argument on the command line
     if (!got_file) {
         MESSAGE<<"No inputFile parameter file given!!"<<ENDM_WARN;
@@ -118,9 +118,9 @@ int main(int argc, char* argv[]){
     parameter::ReadParsFromFile( inMap, paramFile );
 
     if ( !is_3dsphr_object && !is_3dcarthisto_object ) {
-        yasper::ptr< CObject1d > pExpansion; 
+        yasper::ptr< CObject1d > pExpansion;
         for ( vector<string>::iterator it=modeList.begin(); it!=modeList.end(); ++it)
-        {    
+        {
             if      ( *it == "-legendre" )    { pExpansion = new CLegendrePolynomialExpansion1d; }
             else if ( *it == "-bspline" )     { pExpansion = new CBasisSpline1d; }
             else if ( *it == "-laguerre" )    { pExpansion = new CLaguerrePolynomialExpansion1d; }
@@ -130,14 +130,14 @@ int main(int argc, char* argv[]){
             else if ( *it == "-gaussian" )    { pExpansion = new CGaussianSource; }
             else if ( *it == "-correlation" ) { pExpansion = new CHistogram1d; }
             else  MESSAGE<<"Unknown mode: '"<<*it<<ENDM_WARN;
-        }    
+        }
         pExpansion->Read( inMap );
         plotWidget1d( pExpansion, inMap, 0.0, 100.0 );
-    } 
+    }
     else if ( is_3dsphr_object ){
-        yasper::ptr< CObject3d > pObj; 
+        yasper::ptr< CObject3d > pObj;
         for ( vector<string>::iterator it=modeList.begin(); it!=modeList.end(); ++it)
-        {    
+        {
             if      ( *it == "-legendre" )    { pObj = new CSphericalHarmonicExpansion< CLegendrePolynomialExpansion1d >; }
             else if ( *it == "-bspline" )     { pObj = new CSphericalHarmonicExpansion< CBasisSpline1d >; }
             else if ( *it == "-laguerre" )    { pObj = new CSphericalHarmonicExpansion< CLaguerrePolynomialExpansion1d >; }
@@ -147,19 +147,19 @@ int main(int argc, char* argv[]){
             else if ( *it == "-gaussian" )    { pObj = new CSphericalHarmonicExpansion< CGaussianSource >; }
             else if ( *it == "-correlation" ) { pObj = new CSphericalHarmonicExpansion< CHistogram1d >; }
             else  MESSAGE<<"Unknown mode: '"<<*it<<ENDM_WARN;
-        }    
+        }
         pObj->Read( inMap );
         pObj->readTerms();
         plot3dSlices( pObj, inMap );
     }
     else if ( is_3dcarthisto_object ){
-        yasper::ptr< CObject3d > pObj = new CHistogram3d; 
+        yasper::ptr< CObject3d > pObj = new CHistogram3d;
         pObj->Read( inMap );
         plot3dSlices( pObj, inMap );
     }
-    return true;
+    return 0;
 }
-    
+
 // ------------- plotWidget1d -------------
 void plotWidget1d( yasper::ptr< CObject1d > pExpansion, const parameterMap& inMap, double xmin, double xmax ){
     string outFile = parameter::getS(inMap,"plot_file","output_plot.dat");
@@ -196,5 +196,3 @@ void plot3dSlices( yasper::ptr< CObject3d > pObj, const parameterMap& inMap ){
         dataZ << x << "  " << pObj->getValueCart(0.,0.,x) << "  " << pObj->getErrorCart(0.,0.,x)<<endl;
     }
 }
-
-

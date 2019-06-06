@@ -12,8 +12,8 @@ extern "C" {
 
 static integer c__2 = 2;
 
-/* Subroutine */ int dinhre_(integer *ndim, integer *key, integer *wtleng, 
-	doublereal *w, doublereal *g, doublereal *errcof, doublereal *rulpts, 
+/* Subroutine */ int dinhre_(integer *ndim, integer *key, integer *wtleng,
+	doublereal *w, doublereal *g, doublereal *errcof, doublereal *rulpts,
 	doublereal *scales, doublereal *norms)
 {
     /* System generated locals */
@@ -27,10 +27,10 @@ static integer c__2 = 2;
     static integer i__, j, k;
     static doublereal we[14];
     extern /* Subroutine */ int d113re_(integer *, doublereal *, doublereal *,
-	     doublereal *, doublereal *), d132re_(integer *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *), d07hre_(integer *, 
+	     doublereal *, doublereal *), d132re_(integer *, doublereal *,
+	    doublereal *, doublereal *, doublereal *), d07hre_(integer *,
 	    integer *, doublereal *, doublereal *, doublereal *, doublereal *)
-	    , d09hre_(integer *, integer *, doublereal *, doublereal *, 
+	    , d09hre_(integer *, integer *, doublereal *, doublereal *,
 	    doublereal *, doublereal *);
 
 /* ***BEGIN PROLOGUE DINHRE */
@@ -137,14 +137,14 @@ static integer c__2 = 2;
 	    }
 	    i__2 = *wtleng;
 	    for (j = 1; j <= i__2; ++j) {
-		we[j - 1] = w[k + 2 + j * 5] + scales[k + i__ * 3] * w[k + 1 
+		we[j - 1] = w[k + 2 + j * 5] + scales[k + i__ * 3] * w[k + 1
 			+ j * 5];
 /* L30: */
 	    }
 	    norms[k + i__ * 3] = 0.;
 	    i__2 = *wtleng;
 	    for (j = 1; j <= i__2; ++j) {
-		norms[k + i__ * 3] += rulpts[j] * (d__1 = we[j - 1], abs(d__1)
+		norms[k + i__ * 3] += rulpts[j] * (d__1 = we[j - 1], ABS(d__1)
 			);
 /* L40: */
 	    }

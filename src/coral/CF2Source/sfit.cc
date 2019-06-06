@@ -1,29 +1,29 @@
 // <<BEGIN-copyright>>
-// 
+//
 //                 The GNU General Public License (GPL) Version 2, June 1991
-// 
-// Copyright (c) 2013, Lawrence Livermore National Security, LLC. Produced at the Lawrence 
-// Livermore National Laboratory. Written by Ron Soltz (soltz1@llnl.gov), David A. Brown 
+//
+// Copyright (c) 2013, Lawrence Livermore National Security, LLC. Produced at the Lawrence
+// Livermore National Laboratory. Written by Ron Soltz (soltz1@llnl.gov), David A. Brown
 // (dbrown@bnl.gov) and Scott Pratt (pratts@pa.msu.edu).
-// 
-// CODE-CODE-643336 All rights reserved. 
-// 
+//
+// CODE-CODE-643336 All rights reserved.
+//
 // This file is part of CorAL, Version: 1.17.
-// 
+//
 // Please see the file LICENSE.TXT in the main directory of this source code distribution.
-// 
-// This program is free software; you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License (as published by the Free Software Foundation) version 2, 
+//
+// This program is free software; you can redistribute it and/or modify it under the terms of
+// the GNU General Public License (as published by the Free Software Foundation) version 2,
 // dated June 1991.
-// 
-// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-// without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the terms and conditions of the GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License along with this program; 
-// if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, 
+//
+// You should have received a copy of the GNU General Public License along with this program;
+// if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 // MA 02111-1307 USA
-// 
+//
 // <<END-copyright>>
 #ifndef  __INCLUDE_SFIT_CC__
 #define  __INCLUDE_SFIT_CC__
@@ -101,7 +101,7 @@ void  CCF2SFit::SetPar(string parstring, double  xset, double  errorset,double  
 	}
 	if (i<nmaxpars) par[i]->Set(parstring,xset,errorset,xminset,xmaxset);
 	else  printf("Can not set %s, parameter with that name does not exist\n",
-		parname); 
+		parname);
 }
 
 void  CCF2SFit::AddPar(string parstring, double  xset, double  errorset,double  xminset, double  xmaxset){
@@ -319,7 +319,7 @@ CCF2SFit::CCF2SFit(CCHArray *sourceCHset,C3DArray *source3Dset,CMCList *listaset
 	wf=wfset;
 	cexp3D=cexp3Dset;
 	cerror3D=cerror3Dset;
-	ctheory3D=ctheory3D;
+	//ctheory3D=ctheory3D;  // not needed
 	cexpCH=cexpCHset;
 	cerrorCH=cerrorCHset;
 	ctheoryCH=ctheoryCHset;
@@ -411,7 +411,7 @@ double  CCF2SFit::GetChiSquared( double  *xx){
 	}
 	else if(calcflag==8){
 		sourcecalc->GaussCFCalc(ctheory3D);
-		chisquared=CFCalc::GetChiSquared(cexp3D,cerror3D,ctheory3D);	
+		chisquared=CFCalc::GetChiSquared(cexp3D,cerror3D,ctheory3D);
 	}
 	else if(calcflag==9){
 		sourcecalc->randy->reset(-1234);
@@ -699,7 +699,7 @@ void  CCF2SFit::Metropolis( int  maxcalls){
 			for (i=0;i<nfreepars;i++) x[i]=par[i]->currentx;
 			currentchisquared=GetChiSquared(x);
 		}
-		for (j=0;j<nfreepars;j++) 
+		for (j=0;j<nfreepars;j++)
 			xran[j]=randy->gauss();
 		for (i=0;i<nfreepars;i++){
 			if (par[i]->fixed==false){
