@@ -17,4 +17,5 @@ References for core-halo model and OSCAR format
 ===============================================
 * D. A. Brown, R. Soltz, J. Newby, and A. Kisiel,
   [_Exploring lifetime effects in femtoscopy_](https://journals.aps.org/prc/abstract/10.1103/PhysRevC.76.044906),
+  Phys. Rev. C 76: 044906 (2007).
 * [_Open Standard Codes and Routines_](https://karman.physics.purdue.edu/OSCAR/index.php/Main_Page)
