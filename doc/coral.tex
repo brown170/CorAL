@@ -1,5 +1,7 @@
 \documentclass[10pt]{article}
 \usepackage{pdfsync}
+\usepackage{minted}
+
 \textwidth 6.5in
 \textheight 9.5in
 \voffset -0.85 in
@@ -9,6 +11,19 @@
 \def\tab{\hspace*{9pt}}
 \renewcommand{\familydefault}{phv}
 \newcommand{\coral}{CorAL}
+
+
+% ================================================================================================================
+% 
+%. User-guide like thing for CorAL
+%
+%  Authors:
+%.          David Brown (LLNL & BNL)
+%           Mike Heffner (LLNL)
+%           Scott Pratt & Li Yang (MSU)
+%
+% ================================================================================================================
+
 \begin{document}
 
 \title{\coral\\
@@ -38,7 +53,9 @@ Scott Pratt and Li Yang\\
 
 \newpage
 
+%----------------------------------------------------------------------------------------
 \section{Introduction}
+%----------------------------------------------------------------------------------------
 
 \coral\ is a code base for analysis of 2-particle correlations at small relative momentum. It includes routines for reading, storing and manipulating three-dimensional correlation functions and source functions. Three-dimensional data can be stored in a Cartesian mesh or in terms of expansion coefficients using either Cartesian Harmonics or spherical harmonics as a basis. Routines are provided to translate between different three-dimensional realizations. \coral routines provide both the means to calculate correlation functions from source functions, and to perform the inverse, by either fitting to a parameterized form, or to perform imaging.
 
@@ -86,7 +103,9 @@ The functions of \coral\ are to :
 \item Perform deconvolutions to generate source functions from experimentally determined source functions. This will done either through parameter fitting or through {\it imaging} which involves fitting to source functions whose radial dependences are defined by splines or other very general forms. 
 \end{itemize}
 
+%----------------------------------------------------------------------------------------
 \section{Directory Structure}
+%----------------------------------------------------------------------------------------
 
 The base directory of \coral\ has four directories:\\
 {\tt doc/ \tab include/ \tab lib/ \tab src/ \tab examples/ \tab codetests/}\\
@@ -101,12 +120,712 @@ The routines for generating {\tt CWaveFunction} objects are in {\tt src/WaveFunc
 
 Example codes are kept in {\tt examples/}. These codes are meant to provide examples which can be useful in getting started with \coral. The directory {\tt codetests} also has some examples which can be used to test whether \coral is operating correctly.
 
-\section{Data Arrays}
+%----------------------------------------------------------------------------------------
+\section{Installing, Compiling and Running \coral}
+%----------------------------------------------------------------------------------------
+
+\coral will be downloaded as a file {\tt coral.tar.gz}. After decompression, the project will appear in a directory {\tt CorAL/}, which can be moved at the user's discretion.
+
+\subsection{Compiling \coral}
+%----------------------------
+
+\coral will not function without the installation of the GSL (Gnu Scientific Library). This can be found by first dialing into:\\
+\tab http://www.gnu.org/software/gsl\\
+{\bf GSL} routines are used for random numbers, Bessel functions, Coulomb wave functions, spherical harmonics and Clebsch-Gordan coefficients. The code is only tested for the GNU compiler (g++, version 4.0 or higher). {\bf GSL} and g++ are available for Linux, Windows and Mac OS X. Rather than using makefiles, \coral uses a replacement for the {\tt make} command, {\tt scons}, which provides a simple means to ensure that object files, libraries, and executables are recompiled on a must-compile basis. The package is available at:\\
+\tab http://www.scons.org\\
+
+\coral Compilation requires a few environmental variables, which allow \coral to find header files, source files and libraries. These variables are:\vspace*{-8pt}
+\begin{center}
+\begin{tabular}{|r|c|l|} \hline
+VARIABLE & DESCRIPTION & EXAMPLE \\ \hline
+{\tt CORAL\_HOME} & base directory, where {\tt src/}, {\tt include/}, {\tt examples}... reside & {\tt /Users/Barbara/CorAL/} \\ \hline
+{\tt CORAL\_GSLPATH}& root of {\tt ../lib/gsl} and {\tt ../include/gsl} & {\tt /usr/local/} \\ \hline
+{\tt CORAL\_X11PATH}& root of {\tt ../lib/X11} and {\tt ../include/X11} & {\tt /usr/X11R6/} \\ \hline
+{\tt CORAL\_CCFLAGS} & optimization flags for g++ & {\tt -O2} \\ \hline
+\end{tabular}
+\end{center}
+\vspace*{-8pt}
+\noindent
+If the environment variables are not set, \coral will do its best to guess the appropriate values given your operating system. ?????? can it even guess CORAL\_HOME ???????
+
+To compile the libraries, one need only go into the \coral ~home directory enter:\\
+\verb!~!{\sl /CorAL\%}~{\tt scons}\\
+If all works, the code will be compiled and three static libraries will appear in {\tt lib/}: {\tt libcoral.a}, {\tt libcoralutils.a} and {\tt libxgraph.a}. The xgraph library is non-essential and is mainly used for the code tests, so if it fails to compile, or if you simply have no need for it, you can delete the one pertinent line in the {\tt SConstruct} file in the \coral ~home directory. 
+
+
+
+To incorporate \coral\ functionality into your code, you need only add an include statement to your code, then compile. If you wish to use the static \coral\ library ({\tt libcoral.a} in {\tt lib/}), you need to add the line:\\
+\tab {\tt \#include "coral.h"}\\
+to the beginning of your source code, then compile with the command:\\
+\tab {\tt g++ -I \$\{CORALHOME\}/include -L \$\{CORALHOME\}/lib -lcoral -lgsl
+-lgslcblas myprog.cc -o myprog},\\
+where {\tt CORALHOME} is the root \coral\ directory. If you would prefer to recompile the source code along with your main program, you would add the line:\\
+\tab {\tt \#include "coral.cc"}\\
+to your main routine rather than {\tt coral.h}, and compile with the command:\\
+\tab {\tt g++ -I \$\{CORALHOME\}/include -lgsl -lgslcblas myprog.cc -o myprog},\\
+The codes in the {\tt sample/} directory can be compiled with {\tt make} (e.g. {\tt make wfsample}) using the {\tt makefile} found in that directory. The header file {\tt coral.h} simply contain include statements to the remaining headers.
+
+The result of the compilation will be a shared library file {\tt libcoral.a} which will reside in the {\tt lib} directory. The {\tt make} command will also copy all header and source files from the {\tt src/} tree into the {\tt include/} directory (unless new versions already exist). If new source files are added to the {\tt src} directory, the makefile must be edited. To make a new makefile, simply run the shell script:\\
+\tab {\tt makemaker.sh > makefile},\\
+then change the {\tt \$\{OPT\}} variable in the makefile if needed. In the makefile in the {\tt samples/} directory, one can also recompile the source with command {\tt make coral}, which changes to the {\tt lib/} directory, compiles \coral\ and returns to the original directory.
+
+Not all source code found in the {\tt src/} tree is compiled into \coral, although any {\tt *.cc} or {\tt *.h} file will be used as a dependency in the makefile. If you add source files, they should be listed with an include statement in one of the following source and header files which are included in the compilation: {\tt coral.cc \tt coral.h \tt misc.cc, misc.h, arrays.cc, arrays.h, sf.cc, sf.h, parametermap.cc, parametermap.h, wavefunction.cc, wavefunction.h, source2CF.cc, source2CF.h, kernel.cc, kernel.h}. For instance, if you add a new source file, {\tt wf\_lambdaxi.cc}, which is used to calculate wave functions for $\Lambda$s and $\Xi$s, you would add a line to the  file {\tt wavefunction.cc} so that it would become:\\
+\tab {\tt \#include "wavefunction.h"}\\
+\tab {\tt \#include "wfcommon.cc"}\\
+\tab {\tt \#include "planewave.cc"}\\
+\tab {\tt \#include "partwave.cc"}\\
+\tab {\tt \#include "pipi\_phaseshifts.cc"}\\
+\tab {\tt \#include "wf\_pp.cc"}\\
+\tab {\tt \#include "wf\_pkplus.cc"}\\
+\tab {\tt \#include "wf\_pipluspiplus.cc"}\\
+\tab {\tt \#include "wf\_pipluspiminus.cc"}\\
+\tab {\tt \#include "wf\_nn.cc"}\\
+\tab {\tt \#include "wf\_lambdaxi.cc}\\
+In fact, there do exist several {\tt wf\_...} files in the {\tt src/} tree which are not included as they are either in development or are untested.
+
+
+\subsection{Code Tests and Examples}
+%-----------------------------------
+
+For the purpose of testing \coral , several source files are located in the {\tt codetests/} directory.  All these tests build with the main \texttt{SConstruct} file in the top-level directory of the project:
+\begin{minted}[frame=single]{sh}
+    > scons tests=True
+\end{minted}
+They install to the {\tt codetests/} directory, along with their source and all needed data files.
+
+
+\subsubsection{Unit tests \& the like} 
+These are simple tests of specific functions/routines in various codes
+
+\begin{itemize}
+
+	\item Integrator tests:
+
+    	\begin{itemize}
+    		\item \texttt{dcuhre/dtest1} -- FAILS TO BUILD::
+    		\item \texttt{dcuhre/dtest2} -- FAILS TO BUILD::
+    	\end{itemize}
+
+
+	\item Linear algebra tests:
+
+    	\begin{itemize}
+    		\item \texttt{complexmatrixtest} -- linear algebra tests or complex N-dimensional matrices
+    		\item \texttt{realmatrixtest} -- linear algebra tests or real N-dimensional matrices
+    		\item \texttt{tnt\_inversions} -- matrix math and GLSQR inverter tests
+    	\end{itemize}
+
+
+	\item Random numbers:
+
+    	\begin{itemize}
+    		\item \texttt{gslrantest} -- test GSL's random number generator
+    		\item \texttt{rantest} -- test CorAL's random number generator
+    	\end{itemize}
+
+
+	\item Special function tests:
+
+    	\begin{itemize}
+    		\item \texttt{chtester} -- Cartesian harmonics
+    		\item \texttt{gslbesstester} -- test of GSL's Bessel functions
+    		\item \texttt{gslbug} -- test of a GSL bug in its Coulomb WF package
+    		\item \texttt{ylmchtester} -- Spherical to Cartesian harmonic conversions
+    		\item \texttt{ylmtester} -- a Spherical harmonic ($Y_{lm}$) tester
+    	\end{itemize}
+
+
+	\item Tests of miscellaneous utilities:
+
+    	\begin{itemize}
+    		\item \texttt{dycast\_tester} -- test various smart-pointer tools used in CorAL
+    		\item \texttt{testBoost} -- Lorentz boosts
+    	\end{itemize}
+
+
+	\item Wavefunction test codes:
+
+    	\begin{itemize}
+    		\item \texttt{coulwave/cgtester} -- 
+    		\item \texttt{coulwave/cwtester} -- FAILS TO BUILD:: function \texttt{CWincoming\_smallr} not declared in \texttt{wavefunction.h}
+            \item \texttt{iwtest} -- 
+            \item \texttt{phaseshift\_tester} -- ?? which is which?
+            \item \texttt{sortTheseOut/phseshift\_tester} -- ?? which is which?
+            \item \texttt{sortTheseOut/wftestX} -- ?? 
+            \item \texttt{planewavetest} -- 
+    		\item \texttt{wfsample} -- 
+    	\end{itemize}
+
+
+	\item stester -- simple CorAL regression tests: type "stester -help" to find out details
+
+		\begin{minted}[frame=single,fontsize=\footnotesize]{sh}
+        Valid tests are: -pmap       : Test read/write/assignment of parameterMap
+                         -objio      : Read/write various objects
+                         -harm       : FAILS:: Initialize a 3d correlation represented in a Spherical 
+                                       Harmonic basis
+                         -image      : FAILS:: Simple basis spline imaging test in 1d
+                         -legimage   : FAILS:: Simple Legendre polynomial imaging test in 1d
+                         -legimage3d : FAILS:: Legendre polynomial imaging test in 3d
+                         -conv       : FAILS:: Convolute a Gaussian with a kernel
+		\end{minted}
+        This code uses all tests in the \texttt{imageLegendreTest.h}, \texttt{objectIOTest.h}, \texttt{parameterMapTest.h} headers.
+
+    \item Obsolete tests:
+    
+    	\begin{itemize}
+            \item \texttt{besstester} -- test of Bessel functions
+            \item \texttt{coulwave/ptester} -- 
+            \item \texttt{fixUncert} -- 
+            \item \texttt{ylm\_tester} -- a Spherical harmonic ($Y_{lm}$) tester
+    	\end{itemize}
+    
+\end{itemize}
+
+\subsubsection{Integration tests}
+These are more complex tests that check whether components of \coral\ work together.
+
+\begin{itemize}
+    
+    \item Kernels:
+    
+    	\begin{itemize}
+            \item \texttt{kernelsample} -- 
+            \item \texttt{sortTheseOut/kerneltestX} -- FAILS TO BUILD::
+            \item \texttt{kzeros} -- zeros of the $K_l=0(q,r)$ and $K_l=2(q,r)$ \texttt{pi0}-\texttt{pi0} kernel
+    	\end{itemize}
+	
+    
+    \item Miscellaneous:
+    
+    	\begin{itemize}
+        	\item \texttt{boltztest} -- 
+        	\item \texttt{cgctester} -- 
+        	\item \texttt{testConvolve} -- 
+    	\end{itemize}
+    
+    
+    \item Source functions:
+    
+    	\begin{itemize}
+        	\item \texttt{sourcesample\_blast} --
+        	\item \texttt{sourcesample\_gauss} --
+        	\item \texttt{sourcesample\_OSCAR} -- FAILS TO BUILD:: wrong function prototype for \texttt{CSourceCalc\_OSCAR::CalcS} ??
+    	\end{itemize}
+
+\end{itemize}
+    
+
+
+
+
+
+
+%After changing into that directory, one can enter:\\
+%\verb!~!{\sl CorAL/codetests\%}{\tt \%~scons wftestX}\\
+%which will create the executable {\tt wftestX}. Running this should open an X-window comparing a stored $pp$ correlation function with one being calculated by {\tt wftestX}. The %procedure can be repeated with several other files in {\tt codetests/}.
+
+
+
+\subsection{Known Issues}
+%------------------------
+
+{\bf GSL} has a bug in the Coulomb partial wave routines for versions 1.7 and earlier. The sign of the wave function for larger ($>$3) values of $x=qr/\hbar$ oscillates between the correct and incorrect sign. The authors have provided a fix to the source code (see below). If you do not have this fix to {\bf GSL}, you can edit the file {\tt src/'/SpecialFunctions/CoulWave/coulwave.cc} and comment away the line {\tt \#define NO\_GSLCOULWAVE\_BUG}. If you want to change the {\bf GSL} source file, then recompile, a bug fix was provided by the author and is described in the text file "gslbugfix.txt" which is included in  {\tt doc/}.
+
+%----------------------------------------------------------------------------------------
+\section{Parameter files}
+%----------------------------------------------------------------------------------------
+\coral \ uses its own input and parameter file format for controlling both the executables distributed with \coral \ and many of the subroutines in the \coral \ library itself.  The main use of files in the \coral \ format is to populate instances of the associative array class called {\tt parameterMap} (defined in the {\tt parameter\_map.h} file).  The data types supported by \coral \ are given in Table \ref{table:types}.  \coral's general format is straightforward and consists of a few variations:
+\begin{itemize}
+	\item {\bf simple}: used for simple scalar data or small strings and has the format:\\
+			\hspace*{0.25 in}{\tt type   name   value}\\
+	For example:\\
+			\hspace*{0.25 in}{\tt int   lmax   2\\
+			\hspace*{0.25 in}string	filename	output.dat	}\\
+	Note, strings do not need to be quoted and whitespace separates each token.
+	\item {\bf multi-line}: used for vectors and lists and has the format:\\
+			\hspace*{0.25 in}{\tt type   name   \{}\\
+			\hspace*{0.5 in}{\tt value0}\\
+			\hspace*{0.5 in}{\tt value1}\\
+			\hspace*{0.5 in}{\tt ...}\\
+			\hspace*{0.25 in}{\tt \}}\\
+	Again, strings do not need to be quoted and whitespace separates each token.  In the array, each value is given on its own line.  The dimension of the vector is computed from the length of the vector.
+	\item {\bf extended multi-line}: used for matrices exclusively and have the form\\
+			\hspace*{0.25 in}{\tt type   name   \{}\\
+			\hspace*{0.5 in}{\tt value00 value01 value02 ...}\\
+			\hspace*{0.5 in}{\tt value10 value11 value12 ...}\\
+			\hspace*{0.5 in}{\tt ...}\\
+			\hspace*{0.25 in}{\tt \}}\\
+	We assume that the matrices are rectangular and get the dimensions for the matrix from the number of columns in the first line and the number of rows in the entire data structure.  We do not check that each line has the proper number of elements in it.
+	\item {\bf nested multi-line}: used for storing {\tt parameterMap}s and may contain any simple, multi-line or extended multi-line inside.  The format is as follows:\\
+			\hspace*{0.25 in}{\tt type   name   \{}\\
+			\hspace*{0.5 in}{\tt subtype0 subname0 subvalue0}\\
+			\hspace*{0.5 in}{\tt subtype1 subname1 \{ }\\
+			\hspace*{0.75 in}{\tt value11}\\
+			\hspace*{0.75 in}{\tt ...}\\
+			\hspace*{0.5 in}{\tt \} } \\
+			\hspace*{0.5 in}{\tt ...}\\
+			\hspace*{0.25 in}{\tt \} }\\
+	The order of items in a {\tt parameterMap} is not preserved so is not important for the input files.
+	\item {\bf comments}: If the character ``{\tt \#}'' is encountered, the remainder of the line is considered a comment.  For example:\\
+			\hspace*{0.25 in}{\tt \#int   lmax   0 \# the old value}\\
+			\hspace*{0.25 in}{\tt int   lmax   2 \# the new value}\\
+			\hspace*{0.25 in}{\tt string	filename	output.dat \# this is the output correlation}\\
+\end{itemize}
+
+\begin{table}
+	\begin{tabular}{lll}
+		\hline\hline
+		\coral\ type 	& C++ equivalent & Syntax \\ \hline \hline
+		{\tt bool}		& {\tt bool} & simple \\
+		{\tt int}		& {\tt int} & simple \\
+		{\tt double} 	& {\tt double} & simple  \\
+		{\tt string}		& {\tt std::string} & simple \\
+		{\tt vector\_bool}	& {\tt std:vector< bool > } & multi-line \\
+		{\tt vector\_int}		& {\tt std:vector< int > } & multi-line \\
+		{\tt vector\_double}	& {\tt std:vector< double > } & multi-line \\
+		{\tt vector\_string}	& {\tt std:vector< std::string > }  & multi-line\\
+		{\tt matrix\_double} 	& {\tt std:vector< std:vector< double > > }  & extended  multi-line\\
+		{\tt parameter\_map}& {\tt parameterMap}& nested multi-line\\\hline
+	\end{tabular}
+	\caption{\label{table:types}Data types supported by \coral \  and their mappings onto C++ data structures inside \coral}
+\end{table}
+
+
+The follow set of tables, Tables \ref{}-\ref{}, detail the various input parameters in each class.
+
+%----------------------------------------------------------------------------------------
+\section{Sample codes}
+%----------------------------------------------------------------------------------------
+The main part of the project are the static libraries in the {\tt lib/} directory.  
+However, using them is not currently well documented, so we provide examples and 
+executables that use the libraries.  In the {\tt bin/} directory, there are several 
+executables.
+
+The \coral\ package includes a {\tt examples/} directory. Within that directory are several example codes. With these codes you can additionally 
+
+All have inline help (invoke using e.g. ``{\tt > crab -h}'').
+
+\begin{table}
+\caption{supported particles and their keys}
+\begin{center}
+\begin{tabular}{|c|c|}
+"pi+"&\\
+"pi-"&\\
+"pi0"&\\
+"K+"&\\
+"K-"&\\
+"p"&\\
+"n"&\\
+"Xi"&\\
+"lambda"&\\
+"antilambda"
+\end{tabular}
+\end{center}
+\label{supported particles}
+\end{table}%
+
+\begin{table}
+\caption{supported pairs}
+\begin{center}
+\begin{tabular}{|c|c|} 
+pi+ pi+ *			& wf\_pipluspiplus\_nostrong.cc               \\
+pi+ pi+ 			& wf\_pipluspiplus\_phaseshift.cc             \\
+pi+ pi+ 			& wf\_pipluspiplus\_sqwell.cc              \\   
+pi+ pi- 			& wf\_pipluspiminus\_phaseshift.cc            \\
+pi+ pi- 			& wf\_pipluspiminus\_sqwell.cc                \\
+pi+ pi-, K+ K- 		& wf\_pipluspiminus\_nostrong.cc             \\
+K+ pi+, K- pi-		& wf\_kpluspiplus\_sqwell.cc                  \\
+K+ pi-, K- pi+		& wf\_kpluspiminus\_phaseshift.cc            \\ 
+K+ pi-, K- pi+ 		& wf\_kpluspiminus\_sqwell.cc                 \\
+p pi+ 			& wf\_ppiplus\_phaseshift.cc\\
+p pi+ 			& wf\_ppiplus\_sqwell.cc\\
+p pi- 				& wf\_ppiminus\_sqwell.cc\\
+p K+  			& wf\_pkplus\_sqwell.cc\\
+p K+ 			& wf\_pkplus\_phaseshift.cc\\
+p p 				& wf\_pp\_phaseshift.cc\\
+p p 				& wf\_pp\_schrod.cc\\
+n n 				& wf\_nn\_phaseshift.cc            \\           
+p n  				& wf\_pn\_phaseshift.cc\\
+Lambda Lambda 	& wf\_lambdalambda\_phaseshift.cc             \\
+Lambda Lambda 	& wf\_lambdalambdaantiparspin\_phaseshift.cc \\ 
+Lambda Lambda 	& wf\_lambdalambdaparspin\_phaseshift.cc     \\ 
+p Lambda			& wf\_plambda\_phaseshift.cc\\
+Xi pi				& wf\_Xipi\_phaseshift.cc           
+\end{tabular}
+\end{center}
+\label{supported pairs * pi+ pi+ wave function and kernels are used for all identical meson pairs (e.g. K+ K+, pi- pi-, ...); pi0 pi0 correlations are essentially pure Bise-Einstein, so are analytic as are pi+ pi+ or pi- pi- when ignoring Coulomb repulsion.}
+\end{table}%
+
+
+
+
+
+\subsection{bfplot}
+The code {\tt bfplot} is a simple tool that produces linear interpolable tables of the basis functions of each basis.  Additionally, the {\tt -convolve} option allows us to fold the basis function with a kernel specified by the ``particles'' option in the input file.
+
+	\begin{table}
+	\caption{Command line options for {\tt bfplot}, the widget to plot the basis functions using CorAL.  Usage: bfplot $<$option$>$ [inputFile.dat]}
+	\begin{center}
+	\begin{tabular}{|c|c|}
+		-h, -help, --help 	& All print this message, then quit \\
+	    	-legendre       		& Print out Legendre polynomial basis \\
+	    	-bspline        		& Print out Basis Spline basis \\
+	    	-laguerre       		& Print out Laguerre function basis \\
+	    	-chebyshev      		& Print out Chebyshev polynomial basis \\
+	    	-histogram      		& Print out Histogram basis \\
+	    	-hermite        		& Print out Hermite function basis \\
+	    	-convolve       		& Convolve basis funcs with kernel too
+	\end{tabular}
+	\end{center}
+	\label{bfplotCLOptions}
+	\end{table}%
+
+        \begin{table}
+            \begin{tabular}{lllll}
+                \hline\hline
+                Type & Map & Name & Default Value & Description \\
+                \hline\hline 
+                {\tt string} & inMap & particle1 & "pi+" & \\\hline
+                {\tt string} & inMap & particle2 & "pi+" & \\\hline
+                {\tt string} & inMap & basis\_func\_plot\_file & "output\_r\_basis\_funcs.dat" & \\\hline
+                {\tt string} & inMap & convoluted\_basis\_func\_plot\_file & "output\_q\_basis\_funcs.dat" & \\\hline
+                {\tt double} & inMap & qmin & 0.0 & \\\hline
+                {\tt double} & inMap & qmax & 100.0 & \\\hline
+                {\tt int} & inMap & l & 0 & \\\hline
+            \end{tabular}
+            \caption{Input file controls for {\tt bfplot} (src/bfplot/bfplot.cc). }
+        \end{table}
+
+
+
+
+\subsection{scplot}
+Similar to {\tt bfplot}, the {\tt scplot} is a simple tool to make linear interpolable tables of sources and correlations suitable for plotting.  Because each representation of the sources and correlations is a little different and there is no way to denote these in the CorAL input files, you must specify the representation on the command line using the options in the command line options table.
+
+	\begin{table}
+	\caption{Command line options for {\tt scplot}, a widget to plot sources and correlation using CorAL.  Usage: scplot $<$option$>$ [inputFile.dat]}
+	\begin{center}
+	\begin{tabular}{|c|c|}
+		-h, -help, --help &  all print this message, then quit\\
+		-legendre       	& Print out using Legendre polynomial basis\\
+		-bspline        	& Print out using Basis Spline basis\\
+		-laguerre       	& Print out using Laguerre function basis\\
+		-chebyshev      & Print out using Chebyshev polynomial basis\\
+		-histogram      	& Print out using Histogram basis\\
+		-hermite        	& Print out using Hermite function basis\\
+		-gaussian       	& Print out using using Gaussian class\\
+		-correlation    	& inputFile.dat is a correlation, only histogram basis available\\
+		-3dsphr         	& inputFile.dat is a 3d object, in spherical harmonics\\
+		-3dcarthisto    	& inputFile.dat is a 3d Cartesian histogram object
+	\end{tabular}
+	\end{center}
+	\label{default}
+	\end{table}%
+
+        \begin{table}
+            \begin{tabular}{lllll}
+                \hline\hline
+                Type & Map & Name & Default Value & Description \\
+                \hline\hline 
+                {\tt string} & inMap & plot\_file & "output\_plot.dat" & \\\hline
+                {\tt string} & inMap & plot\_file\_x & "output\_plot\_x.dat" & \\\hline
+                {\tt string} & inMap & plot\_file\_y & "output\_plot\_y.dat" & \\\hline
+                {\tt string} & inMap & plot\_file\_z & "output\_plot\_z.dat" & \\\hline
+            \end{tabular}
+            \caption{Input file controls for {\tt scplot} (src/scplot/scplot.cc). }
+        \end{table}
+
+
+
+
+
+
+\subsection{chum}
+Make OSCAR formatted events from simple core-halo model
+CHUM: the Core-Halo Ur-Model
+
+
+{\tt Usage: chum <options> [inputFile.dat]}
+ 
+
+        \begin{table}
+            \begin{tabular}{lllll}
+                \hline\hline
+                Type & Map & Name & Default Value & Description \\
+                \hline\hline 
+                {\tt double} & main & T & 175.0 & Core temperature (in MeV)\\\hline
+                {\tt double} & main & Rx & 4.0 & Core radius in x direction (in fm)\\\hline
+                {\tt double} & main & Ry & 4.0 & Core radius in y direction (in fm)\\\hline
+                {\tt double} & main & Rz & 4.0 & Core radius in z direction (in fm)\\\hline
+                {\tt double} & main & tau\_fo & 10.0 & Core freeze-out duration (in fm/c)\\\hline
+                {\tt double} & main & f & 1.0 & Core fraction\\\hline
+                {\tt int} & main & id & id & ??\\\hline
+                {\tt string} & main & flowprofile & flowprof & ??\\\hline
+                {\tt double} & main & etamin & etamin & ??\\\hline
+                {\tt double} & main & etamax & etamax & ??\\\hline
+                {\tt double} & main & ymin & ymin & ??\\\hline
+                {\tt double} & main & ymax & ymax & ??\\\hline
+                {\tt double} & main & pTmin & pTmin & ??\\\hline
+                {\tt double} & main & pTmax & pTmax & ??\\\hline
+                {\tt string} & main & filename &  & output file name\\\hline
+                {\tt int} & main & initial\_seed & 197 & an integer to serve as a random seed\\\hline
+                {\tt int} & main & num\_particles & 100000 & number of particles to sample\\\hline
+            \end{tabular}
+            \caption{ src/chum/chum.cc }
+        \end{table}
+
+
+\subsection{shark}
+
+Simple HARmonic Kernels (SHARK)  is a tool to pregenerate the full 3D kernel, expanded in Legendre polynomials, 
+for use in Harmonic expansions of the sources and correlations.
+        \begin{table}
+            \begin{tabular}{lllll}
+                \hline\hline
+                Type & Map & Name & Default Value & Description \\
+                \hline\hline 
+                {\tt string} & main & kernel\_particle1 & ``'' & \\\hline
+                {\tt string} & main & kernel\_particle2 & ``'' & \\\hline
+            \end{tabular}
+            \caption{Input file options for Simple HARmonic Kernels (SHARK) using CorAL (src/shark/shark.cc). Usage: shark $<$option$>$ [inputFile.dat]}
+            \label{sharkCLOptions}
+        \end{table}
+
+
+\subsection{crab}
+reimagining of S. Pratt's CoRrelation AfterBurner
+
+{\tt Usage: crab <mode> [inputFile.dat]}
+\begin{table}
+\caption{default}
+\begin{center}
+\begin{tabular}{|c|c|}
+	-1doldway		& Generate 1d source and correlation, using old code for source\\
+	-3dcart       	& Generate 3d source and correlation directly in Cartesian\\
+	-3dcart\_ex    	& Generate 3d source and correlation directly in Cartesian, then expand\\
+	-3dsphr       	& Generate 3d source and correlation directly in Ylm's\\
+	-crab        	 	&  Generate 1d \& 3d correlations and output them in the style of Scott Pratt's CRAB code\\
+	-sourcemaker  	& Generate 1d source \& 3d source slices and output them in the style of Dave Brown's SourceMaker code\\
+	-skip\_correlation  & Skip generation of the correlations if accompanying modes would generate them\\
+	-make\_plots   & Make plots for all the sources and correlations generated\\
+\end{tabular}
+\end{center}
+\label{crabCLOptions}
+\end{table}
+
+        \begin{table}
+            \begin{tabular}{lllll}
+                \hline\hline
+                Type & Map & Name & Default Value & Description \\
+                \hline\hline 
+                \multicolumn{5}{l}{mode {\tt-1d}: Generate 1d source and correlation}\\ \hline
+                {\tt string} & main & source\_file & "output\_source\_1d.dat" & \\\hline
+                {\tt string} & main & correlation\_file & "output\_correlation\_1d.dat" & \\\hline
+                {\tt parameterMap} & main & source\_settings & None & \\\hline
+                {\tt string} & main & source\_file & "output\_source\_1d.dat" & \\\hline
+                {\tt string} & main & correlation\_file & "output\_correlation\_1d.dat" & \\\hline
+                {\tt string} & main & source\_file & "output\_source\_3d.dat" & \\\hline
+                {\tt string} & main & correlation\_file & "output\_correlation\_3d.dat" & \\\hline
+                {\tt string} & main & source\_file\_cart & "output\_source\_3d\_cart.dat" & \\\hline
+                {\tt string} & main & source\_file & "output\_source\_3d\_sphr.dat" & \\\hline
+                {\tt string} & main & correlation\_file & "output\_correlation\_3d\_cart.dat" & \\\hline
+                {\tt string} & main & crab\_correlation\_1d\_filename & "correlation\_qinv.dat" & \\\hline
+                {\tt string} & main & crab\_correlation\_3d\_filename & "correlation\_qinv3d.dat" & \\\hline
+            \end{tabular}
+            \caption{ src/crab/crab.cc }
+        \end{table}
+
+\subsection{converts2c}
+fold a source w/ kernel to make a correlation
+
+\begin{table}
+\caption{Widget to Convert Sources to Correlations (ConvertS2C) using CorAL.  Usage: converts2c $<$option$>$ [inputFile.dat]}
+\begin{center}
+\begin{tabular}{|c|c|}
+	-h, -help, --help & all print this message, then quit\\
+ 	-legendre   &    inputFile.dat uses Legendre polynomial basis\\
+	-bspline      &  inputFile.dat uses Basis Spline basis\\
+	-laguerre     &  inputFile.dat uses Laguerre function basis\\
+	-chebyshev  &    inputFile.dat uses Chebyshev polynomial basis\\
+	-histogram    &  inputFile.dat uses Histogram basis\\
+	-hermite      &  inputFile.dat uses Hermite function basis\\
+	-gaussian    &   inputFile.dat is a 1d Gaussian\\
+	-3d           &  inputFile.dat is a 3d source\\
+	-convolve   &    Use convoluter, not imager for this (uncertainty not included)
+\end{tabular}
+\end{center}
+\label{converts2cCLOptions}
+\end{table}
+
+
+\subsection{diver}
+source imaging code
+
+\begin{table}
+\caption{Demonstration InVERter: a CorAL imaging code.  Usage:  diver [mode] $<$input file$>$}
+\begin{center}
+\begin{tabular}{|c|c|}
+	-help & help message \\
+	-bspline	& Use Basis Spline basis for source\\
+	-chebyshev	& Use Chebyshev polynomial basis for source\\
+	-hermite	& Use Hermite polynomial basis for source\\
+	-histogram	& Use Histogram basis for source\\
+	-laguerre	& Use Laguerre polynomial basis for source\\
+	-legendre	& Use Legendre polynomial basis for source\\
+	-norestore	& Don't restore the correlation\\
+	-restore	& Restore the correlation\\
+	-1d	& Problem is 1d\\
+	-3d	& Problem is 3d
+\end{tabular}
+\end{center}
+\label{default}
+\end{table}%
+
+        \begin{table}
+            \begin{tabular}{lllll}
+                \hline\hline
+                Type & Map & Name & Default Value & Description \\
+                \hline\hline 
+                {\tt string} & main & correlation\_file & None & \\\hline
+                {\tt string} & main & imaged\_source\_file & None & \\\hline
+                {\tt string} & main & restored\_correlation\_file & None & \\\hline
+                {\tt parameterMap} & main & source\_settings & None & \\\hline
+                {\tt parameterMap} & main & source\_settings & None & \\\hline
+            \end{tabular}
+            \caption{ src/diver/diver.cc }
+        \end{table}
+
+%----------------------------------------------------------------------------------------
+\section{\texttt{parameterMap} Reference}
+%----------------------------------------------------------------------------------------
+
+\subsection{1d Function Parameterizations/Basis Functions}
+%---------------------------------------------------------
+        \begin{table}
+            \begin{tabular}{lllll}
+                \hline\hline
+                Type & Map & Name & Default Value & Description \\
+                \hline\hline 
+                {\tt int} & s & l & l & \\\hline
+                {\tt int} & s & m & m & \\\hline
+                {\tt bool} & s & realpart & realpart & \\\hline
+                {\tt bool} & s & imagpart & !realpart & \\\hline
+                {\tt int} & s & lx & lx & \\\hline
+                {\tt int} & s & ly & ly & \\\hline
+                {\tt int} & s & lz & lz & \\\hline
+                {\tt bool} & s & spherical\_harmonic & sphrHarm & \\\hline
+                {\tt bool} & s & cartesian\_harmonic & !sphrHarm & \\\hline
+            \end{tabular}
+            \caption{ (src/coral/ObjectInterfaces/objects1d.cc)}
+        \end{table}
+ 
+         \begin{table}
+            \begin{tabular}{lllll}
+                \hline\hline
+                Type & Map & Name & Default Value & Description \\
+                \hline\hline 
+                {\tt int} & com & ndata & data.dim & \\\hline
+                {\tt matrix\_double} & com & covmtx\_datablock & empty\_mat & \\\hline
+                {\tt vector\_double} & com & y\_datablock & empty\_vec & \\\hline
+                {\tt matrix\_double} & com & ydy\_datablock & empty\_mat & \\\hline
+            \end{tabular}
+            \caption{(src/coral/ObjectInterfaces/dataset.cc)}
+        \end{table}
+        
+
+       \begin{table}
+            \begin{tabular}{lllll}
+                \hline\hline
+                Type & Map & Name & Default Value & Description \\
+                \hline\hline 
+                \multicolumn{4}{c}{All Basis Function classes inherit these (src/coral/ObjectInterfaces/func\_expansion1d.cc )}\\\hline
+                {\tt double} & m & xmin & xmin & \\\hline
+                {\tt double} & m & xmax & xmax & \\\hline
+                \multicolumn{4}{c}{(WHAT HAPPENED TO ORTHOGFUN\_EXPANSION?)}\\\hline
+           	\multicolumn{4}{c}{(src/coral/ObjectInterfaces/generic\_spline1d.cc)}\\\hline
+                {\tt int} & m & spline\_degree & 3 & \\\hline
+                {\tt vector\_double} & m & knots\_datablock & empty\_vec & \\\hline
+                \multicolumn{4}{c}{(WHAT HAPPENED TO BSPLINE?)}\\\hline
+                \multicolumn{4}{c}{(src/coral/ObjectInterfaces/histogram1d.cc)} \\\hline
+                {\tt bool} & m & fixed\_width\_bins & fixed\_width\_bins & \\\hline
+                {\tt double} & m & dx & None & \\\hline
+                {\tt double} & m & xmax & None & \\\hline
+                {\tt vector\_double} & m & knots & empty\_vec & \\\hline
+                {\tt matrix\_double} & m & xy\_datablock & empty\_mat & \\\hline
+                {\tt matrix\_double} & m & xydy\_datablock & empty\_mat & \\\hline
+            	\multicolumn{4}{c}{(WHAT HAPPENED TO CHEBYSHEV?)}\\\hline
+            	\multicolumn{4}{c}{(WHAT HAPPENED TO LEGENDRE?)}\\\hline
+            	\multicolumn{4}{c}{(src/coral/ObjectInterfaces/hermitefunction\_expansion1d.cc)}\\\hline
+                {\tt double} & m & xscale & xscale & \\\hline
+            	\multicolumn{4}{c}{(src/coral/ObjectInterfaces/laguerrepoly\_expansion1d.cc)}\\\hline
+                {\tt double} & m & xscale & xscale & \\\hline
+            \end{tabular}
+        \end{table}
+
+
+\subsection{Fitting classes (using MINUIT)}
+ %-----------------------------------------
+
+        \begin{table}
+            \begin{tabular}{lllll}
+                \hline\hline
+                Type & Map & Name & Default Value & Description \\
+                \hline\hline 
+             	\multicolumn{4}{l}{ (src/coral/CF2Source/minuitstuff/sfit\_minuit\_3dgaussian.cc) }\\\hline
+               	{\tt double} & sourcecalc$->$spars & lambda & 1 & \\\hline
+                {\tt double} & sourcecalc$->$spars & Rx & 5 & \\\hline
+                {\tt double} & sourcecalc$->$spars & Ry & 5 & \\\hline
+                {\tt double} & sourcecalc$->$spars & Rz & 5 & \\\hline
+                {\tt double} & sourcecalc$->$spars & Xoff & 0 & \\\hline
+            	\multicolumn{4}{l}{ (src/coral/CF2Source/minuitstuff/sfit\_minuit\_blast.cc) }\\\hline
+                {\tt double} & sourcecalc$->$spars & lambda & 1 & \\\hline
+                {\tt double} & sourcecalc$->$spars & R & 13.0 & \\\hline
+                {\tt double} & sourcecalc$->$spars & Tau & 12.0 & \\\hline
+                {\tt double} & sourcecalc$->$spars & DelTau & 5 & \\\hline
+            	\multicolumn{4}{l}{ ( src/coral/CF2Source/sfit\_3dgaussian.cc) }\\\hline
+                {\tt double} & sourcecalc$->$spars & lambda & 0.5 & \\\hline
+                {\tt double} & sourcecalc$->$spars & Rx & 5 & \\\hline
+                {\tt double} & sourcecalc$->$spars & Ry & 5 & \\\hline
+                {\tt double} & sourcecalc$->$spars & Rz & 5 & \\\hline
+                {\tt double} & sourcecalc$->$spars & Xoff & 0.0 & \\\hline
+             	\multicolumn{4}{l}{ (src/coral/CF2Source/sfit\_blast.cc) }\\\hline
+                {\tt double} & sourcecalc$->$spars & lambda & 1 & \\\hline
+                {\tt double} & sourcecalc$->$spars & R & 13 & \\\hline
+                {\tt double} & sourcecalc$->$spars & Tau & 12 & \\\hline
+                {\tt double} & sourcecalc$->$spars & DelTau & 5 & \\\hline
+           	\multicolumn{4}{l}{ src/coral/CF2Source/minuitstuff/sfit\_minuit\_GX1d.cc) }\\\hline
+                {\tt double} & sourcecalc$->$spars & lambdaG & 0.6 & \\\hline
+                {\tt double} & sourcecalc$->$spars & Xfrac & 0.5 & \\\hline
+                {\tt double} & sourcecalc$->$spars & R & 5 & \\\hline
+                {\tt double} & sourcecalc$->$spars & X & 10 & \\\hline
+                {\tt double} & sourcecalc$->$spars & a & 5 & \\\hline
+            	\multicolumn{4}{l}{ src/coral/CF2Source/sfit\_GX1d.cc) }\\\hline
+                {\tt double} & sourcecalc$->$spars & lambdaG & 0.3 & \\\hline
+                {\tt double} & sourcecalc$->$spars & R & 5 & \\\hline
+                {\tt double} & sourcecalc$->$spars & lambdaX & 0.3 & \\\hline
+                {\tt double} & sourcecalc$->$spars & X & 10.0 & \\\hline
+                {\tt double} & sourcecalc$->$spars & a & 5.0 & \\\hline
+            \end{tabular}
+            \caption{Source fitting input parameters.}
+            \label{sfitParameters}
+        \end{table}
+        
+\subsection{Kernels and Wavefunctions}
+%-------------------------------------
+
+\subsection{1d source functions}
+%-------------------------------
+
+%----------------------------------------------------------------------------------------
+\section{Data Array Reference}
 \label{sec:arrays}
+%----------------------------------------------------------------------------------------
 
 Data are stored in several classes of arrays, including three-dimensional Cartesian meshes, Spherical Harmonic expansions, Cartesian Harmonic expansions and in the future, basis splines. In the next section we will discuss a namespace for operations involving multiple arrays, such as those used to translate into different array types, or multiply and divide arrays.
 
 \subsection{Cartesian Meshes}
+%----------------------------
 
 Cartesian meshes are described by a three dimensional array of size {\tt NXMAX, NYMAX, NZMAX} and granularities {\tt DELX, DELY, DELZ}. The mesh is further defined by three parameters {\tt XSYM, YSYM, ZSYM} which are booleans set to {\tt true} for the corresponding reflection symmetries. When set to {\tt false} the program assigns additional memory to describe data for negative values of {\tt x, y, z}. The $\ell_x,\ell_y,\ell_z$ components refer to a range $\ell_x\Delta x<x<(\ell_x+1)\Delta x$, $\ell_y\Delta y<y<(\ell_y+1)\Delta y\cdots$.
 
@@ -175,6 +894,7 @@ The functions {\tt WriteArray(char *dirname)} and {\tt ReadArray(char *dirname)}
 
 
 \subsection{Cartesian Harmonics Data Arrays}
+%-------------------------------------------
 
 Angular information can also be stored in terms of expansion coefficients describing expansions in terms of powers of unit vectors $\hat{e}$. For a given radial bin {\tt ir}, coefficients $F_{\ell_x,\ell_y,\ell_z}$ can describe the function,
 \begin{equation}
@@ -311,6 +1031,7 @@ Similarly an array of moments $\langle e_x^{\ell_x}e_y^{\ell_y}e_z^{\ell_z}\rang
 If the object stores moments, {\tt GetAExpElementFromMArray(...)} will return the Cartesian-Harmonic expansion coefficient, and if the object stores expansion coefficients, {\tt GetMElementFromAExpArray(...)} will return specific moments.
 
 \subsection{Arrays for Expansions in Spherical Harmonics}
+%--------------------------------------------------------
 
 A class is also provided to accommodate expansions in spherical harmonics. The $Y_{\ell,m}$ expansion coefficients are used to define angular functions,
 \begin{equation}
@@ -337,6 +1058,7 @@ class CYlmArray\{\\
 \};\\ }
 
 \subsection{Array Operations Involving Multiple Arrays}
+%------------------------------------------------------
 
 In addition to the functionality described in the various member functions for the array objects, \coral\ also provides functions involving more than one array through the namespace {\tt ArrayCalc}:
 
@@ -401,7 +1123,10 @@ The {\tt Detrace(A,B)} operation provides an array of Cartesian-Harmonic coeffic
 
 The boolean functions {\tt CompareArrayParameters} check whether arrays have identical dimensions and symmetries ({\tt XSYM, YSMY} and {\tt ZSYM}). For comparisons of {\tt CCHArray} and {\tt C3DArray} objects, only symmetries are tested.
 
-\section{Wave Functions}
+
+%----------------------------------------------------------------------------------------
+\section{Wave Function Reference}
+%----------------------------------------------------------------------------------------
 
 One of the basic elements of the code base are objects which derive from the {\tt CWaveFunction} class. The main functionality of these classes is to calculate the squared wave function. The public members of the base class are:\\
 
@@ -450,7 +1175,9 @@ Classes were defined in such a way to easily accommodate adding additional class
 \end{center}
 $^\dagger${\small Uses fairly complete set of experimental phase shifts}
 
-\section{Kernels and Convolutions}
+%----------------------------------------------------------------------------------------
+\section{Kernels and Convolution Reference}
+%----------------------------------------------------------------------------------------
 
 Kernels are used to provide a connection between both correlations functions and source functions when both are expressed in terms of expansion coefficients for either the Cartesian-Harmonic or the $Y_{\ell,m}$ basis. Since squared wave functions $|\phi(q,r,\cos\theta_{qr})|^2$ is rotationally invariant ({\bf q} and {\bf r} rotate together) there is a one-to-one correpondence between angular moments of the correlation and source functions with the same indices:
 \begin{eqnarray}
@@ -506,7 +1233,9 @@ namespace CS2CF\{\\
 \};}\\
 One uses kernels to perform convolutions with angular decompositions, and wave-functions for convolutions connecting source and correlation functions stored in three-dimensional Cartesian meshes. However, since the kernels are a fairly efficient way of storing the calculated squared wave functions, you can also reproduce the squared wave functions with the functions {\tt GetPsiSquared()}.
 
-\section{Calculating Source Functions}
+%----------------------------------------------------------------------------------------
+\section{Source Function Reference}
+%----------------------------------------------------------------------------------------
 
 Source and correlation function information are both stored in the same types of arrays. Calculating the source from a model, e.g., blast-wave, requires creating a {\tt CSourceCalc} object, or an object derived from this class. This objects stores parameters describing the source, e.g., Gaussian radii, but the actual source information is stored in arrays of the type described in Sec. \ref{sec:arrays}. The arrays are filled with calls of the type {\tt scalc->CalcS(sarray)}, where {\tt scalc} would be a pointer to a source object and {\tt sarray} would be a pointer to a the array storing the source function. The public members of the class are:
 
@@ -614,116 +1343,9 @@ int & {\tt NEVENTSMAX} & 10000 & Maximum \# of events to be read from file\\ \hl
 **All events for which one wishes to mix-and-match phase space points should stored in the same OSCAR file. Data corresponding to different impact parameters should be stored in different files.
 \newpage
 
-\section{Utilities}
-\label{sec:utilities}
-
-The directory {\tt src/Utilities} contains code used for special functions, random-number generation, parameter maps, lorentz boosts, Clebsch Gordan coefficients, Monte-Carlo generation of momenta for boltzmann distributions and the ``triangle function''. We devote space below to describing some of the utilities which we think might likely be of some interest to a user:
-
-The random number generation routines are fairly self explanatory:\\
-{\tt class CRandom\{\\
- public:\\
-\tab double ran(void);\\
-\tab unsigned long int iran(unsigned long int imax); \\
-\tab double gauss(void);\\
-\tab void gauss2(double *g1,double *g2);\\
-\tab CRandom(int seed);\\
-\tab void reset(int seed);\\
-\tab void generate\_boltzmann(double mass,double T,double *p);\\
-\}}\\
-Here, {\tt ran} returns a random real number between 0 and 1, {\tt iran} returns an integer $0\le i <imax$, and gauss returns a gaussian random number consistent with the distribution $e^{-x^2/2}$. The function {\tt gauss2} returns a pair of gaussian numbers which is efficient if one is creating more than one gaussian number since the fundamental algorithm generates pairs of numbers. The function {\tt generate\_boltzmann()} returns momenta consistent with a Boltzmann distribution.These routines use the {\bf GSL} library with the ``ranlxd1'' choice of random number generators. The properties of the various algorithms are documented in the {\bf GSL} documentation. By editing the code {\tt src/Utilities/Random/gslrandom.cc}, one can easily switch to different classes of random number generators.
-
-Including {\tt src/Utilities/Misc/misc.h} and {\tt src/Utilities/Misc/misc.cc} provides a user with several functions.  Clebsch Gordan coefficients can be generated with {\tt double cgc(double j1,double m1,double j2,double m2,double j,double m)}. A four vector {\tt p[4]} can be boosted by a four velocity {\tt u[4]} to {\tt pprime[4]} with {\tt void lorentz(double *u,double *p,double *pprime)}. The ``triangle function'', {\tt double triangle(double M,double ma,double mb)}, defined by $\sqrt{M^4+m_a^2+m_b^2 -2M^2m_a^2-2M^2m_b^2-2m_a^2m_b^2}/(4M^2)$, gives the relative momentum of a object of mass $M$ decaying. The utility {\tt bool comparestrings(char *s1,char *s2)} returns {\tt true} if the strings are identical. Finally, the routine {\tt outsidelong(...)} can be used to find the projections of the relative momentum in the pair frame from two four vectors ${\bf p}_a$ and ${\bf p}_b$. The header file {\tt src/Utilities/Misc/misc.h} has the following prototypes:\\
-{\tt
-\tab void lorentz(double *u,double *p1,double *p1prime);\\
-\tab double cgc(double j1,double m1,double j2,double m2,double j,double m);\\
-\tab bool comparestrings(char *s1,char *s2);\\
-\tab double triangle(double m0,double m1,double m2);\\
-\tab void outsidelong(double *pa,double *pb,\\
-\tab\tab double \&qinv,double \&qout,double \&qside,double \&qlong);}\\
-which are hopefully self-explanatory. Note that {\tt outsidelong} includes the outwards boost which makes $q_{\rm inv}^2=q_{\rm out}^2+q_{\rm side}^2+q_{\rm long}^2$. Thus, the returned value of $q_{\rm out}$ is shorter by a factor $\gamma=(1-v_\perp^2)^{-1/2}$ than what most experimental groups use for their conventions. Also, the canonical relative momentum is used, $q=(1/2)(p_a'-p_b')$ in the pair frame. This also differs from the usual convention for $\pi\pi$ interferometry, but follows the convention used for most other correlations such as $pp$ analyses.
-
-Special functions include spherical harmonics, Legendre Polynomials, Cartesian Harmonics, Coulomb wave functions and a variety of Bessel functions, which are all defined in {\tt src/Utilities/SpecialFunctions/sf.h}. Many of the special functions are simply {\bf GSL} routines in disguise.
-
-Legendre polynomials and spherical harmonics are functions of the namespace {\tt SpherHarmonics}:
-
-{\tt namespace SpherHarmonics\{\\
-\tab double legendre(int ell,double ctheta);\\
-\tab complex <double> Ylm(int ell,int m,double theta,double phi);\\
-\}}\\
-
-Bessel functions are incorporated as a namespace, with the function names being self-explanatory:
-
-{\tt
-namespace Bessel\{\\
-\tab double J0(double x);\\
-\tab double J1(double x);\\
-\tab double Jn(int n, double x);\\
-\\
-\tab double K0(double x);\\
-\tab double K1(double x);\\
-\tab double Kn(int n, double x);\\
-\\
-\tab double Y0(double x);\\
-\tab double Y1(double x);\\
-\tab double Yn(int n, double x);\\
-\\
-\tab double I0(double x);\\
-\tab double I1(double x);\\
-\tab double In(int n, double x);\\
-\\
-\tab double j0(double x);\\
-\tab double j1(double x);\\
-\tab double jn(int n, double x);\\
-
-\tab double y0(double x);\\
-\tab double y1(double x);\\
-\tab double yn(int n, double x);\\
-\\
-\tab complex<double> h0(double x);\\
-\tab complex<double> h1(double x);\\
-\tab complex<double> hn(int n, double x);\\
-
-\tab complex<double> hstar0(double x);\\
-\tab complex<double> hstar1(double x);\\
-\tab complex<double> hstarn(int n, double x);\\
-\};}\\
-
-The namespace {\tt CoulWave} provides functions for calculating Coulomb partial waves. Here, {\tt CWincoming} and {\tt CWoutgoing} are the incoming/outgoing waves defined in terms of the regular and irregular solutions $F_L\pm iG_L$ respectively. The gamma function of a complex argument $\Gamma(z)$ is {\tt cgamma()}.\\
-{\tt
-namespace CoulWave\{\\
-\tab void GetFG(int L,double x,double eta,double *FL,double *GL);\\
-\tab void GetFGprime(int L,double x,double eta,double *FL,double *GL,\\
-\tab \tab double *FLprime,double *GLprime);\\
-\tab complex<double> CWincoming(int ell,double x,double eta);\\
-\tab complex<double> CWoutgoing(int ell,double x,double eta);\\
-\tab complex<double> cgamma(complex<double> cx);\\
-\tab void phaseshift\_CoulombCorrect(int ell,double q,double eta,\\
-					\tab \tab double \&delta,double \&ddeltadq);\\
-\};}\\ \noindent
-Here, the function {\tt phaseshift\_CoulombCorrect} provides a {\bf crude} way to scale phase shifts to account for their distortion due to the Coulomb interaction. In many instances, models or parameterizations provide phase shifts assuming there is no Coulomb interaction, e.g., $\delta_s\sim qa$. This correction assumes that $\tan\delta_{\rm with Coul.}=\tan\delta_{\rm no Coul.}\cdot{\rm Gamow}_\ell(q)$, where the Gamow factor is $F_\ell(q,r=0)/qr|^2$ for a Coulomb wave function.
-
-Cartesian harmonic functions are included as a class rather than as a namespace for the sake of efficiency. Since many of the calculations use binomial and trinomial distributions, and since the {\tt overlap} function might be used repeatedly, arrays are strategically stored so that subsequent calls can be performed more quickly. The public members of the {\tt CCHCalc} object are:\\
-{\tt
-class CCHCalc\{\\
-\tab public:\\
-\tab \tab CCHCalc();\\
-\tab \tab $\sim$CCHCalc();\\
-\tab \tab double GetAFromE(int lx,int ly,int lz,double ex,double ey,double ez);\\
-\tab \tab double GetAFromThetaPhi(int lx,int ly,int lz,double theta,double phi);\\
-\tab \tab double GetMFromE(int lx,int ly,int lz,double ex,double ey,double ez);\\
-\tab \tab double GetMFromThetaPhi(int lx,int ly,int lz,double theta,double phi);\\
-
-\tab \tab double GetOverlap(int lx,int ly,int lz,int lxprime,int lyprime,int lzprime);\\
-\tab \tab double GetOverlap0(int lx,int ly,int lz,int lxprime,int lyprime,int lzprime);\\
-
-\tab \tab double Factorial(int n);\\
-\tab \tab double DoubleFactorial(int n);\\
-\tab \tab double Binomial(int lx,int ly);\\
-\tab \tab double Trinomial(int lx,int ly,int lz);\\
-\};}\\ \noindent
-Here, the {\tt GetA...} functions give the Cartesian harmonics ${\cal A}_{\vec{\ell}}$ as functions of either $\cos\theta$ and $\phi$ or in terms of unit vector components $e_x,e_y,e_z$. The {\tt GetM} functions are simply moments of unit-vector components, $M_{\vec{\ell}}=e_x^{\ell_x}e_y^{\ell_y}e_z^{\ell_z}$. Unlike spherical harmonics, Cartesian harmonics are not orthogonal, and {\tt GetOverlap0(...)} and {\tt GetOverlap(...)} return $(1/4\pi)\int d\Omega A_{\vec{\ell}}(\Omega)A_{\vec{\ell}'}(\Omega)$. The function {\tt GetOverlap(...)} stores the calculated values, creating the needed memories as they are calculated. This saves time but can use significant memory if one is calculating for $\ell\ge 50$. Thus, if one only plans to calculate a few overlaps, one should use {\tt GetOverlap0(...)}. Binomial, factorial and trinomial functions also used stored values for increased speed.
-
-\section{Imaging}
+%----------------------------------------------------------------------------------------
+\section{Imaging Reference}
+%----------------------------------------------------------------------------------------
 
 Kernels and wavefunctions provide the means to calculates correlation function objects if given source function objects. The reverse process is more difficult. Correlation functions and source functions are related to one another through the convolution,
 \begin{equation}
@@ -865,559 +1487,129 @@ class CCF2SFit\_3DGaussian : public CCF2SFit\{\\
 \};\\
 }
 
-\section{Installing, Compiling and Running \coral}
 
-\coral will be downloaded as a file {\tt coral.tar.gz}. After decompression, the project will appear in a directory {\tt CorAL/}, which can be moved at the user's discretion.
+%----------------------------------------------------------------------------------------
+\section{Utility Function Reference}
+\label{sec:utilities}
+%----------------------------------------------------------------------------------------
+
+The directory {\tt src/Utilities} contains code used for special functions, random-number generation, parameter maps, lorentz boosts, Clebsch Gordan coefficients, Monte-Carlo generation of momenta for boltzmann distributions and the ``triangle function''. We devote space below to describing some of the utilities which we think might likely be of some interest to a user:
+
+The random number generation routines are fairly self explanatory:\\
+{\tt class CRandom\{\\
+ public:\\
+\tab double ran(void);\\
+\tab unsigned long int iran(unsigned long int imax); \\
+\tab double gauss(void);\\
+\tab void gauss2(double *g1,double *g2);\\
+\tab CRandom(int seed);\\
+\tab void reset(int seed);\\
+\tab void generate\_boltzmann(double mass,double T,double *p);\\
+\}}\\
+Here, {\tt ran} returns a random real number between 0 and 1, {\tt iran} returns an integer $0\le i <imax$, and gauss returns a gaussian random number consistent with the distribution $e^{-x^2/2}$. The function {\tt gauss2} returns a pair of gaussian numbers which is efficient if one is creating more than one gaussian number since the fundamental algorithm generates pairs of numbers. The function {\tt generate\_boltzmann()} returns momenta consistent with a Boltzmann distribution.These routines use the {\bf GSL} library with the ``ranlxd1'' choice of random number generators. The properties of the various algorithms are documented in the {\bf GSL} documentation. By editing the code {\tt src/Utilities/Random/gslrandom.cc}, one can easily switch to different classes of random number generators.
+
+Including {\tt src/Utilities/Misc/misc.h} and {\tt src/Utilities/Misc/misc.cc} provides a user with several functions.  Clebsch Gordan coefficients can be generated with {\tt double cgc(double j1,double m1,double j2,double m2,double j,double m)}. A four vector {\tt p[4]} can be boosted by a four velocity {\tt u[4]} to {\tt pprime[4]} with {\tt void lorentz(double *u,double *p,double *pprime)}. The ``triangle function'', {\tt double triangle(double M,double ma,double mb)}, defined by $\sqrt{M^4+m_a^2+m_b^2 -2M^2m_a^2-2M^2m_b^2-2m_a^2m_b^2}/(4M^2)$, gives the relative momentum of a object of mass $M$ decaying. The utility {\tt bool comparestrings(char *s1,char *s2)} returns {\tt true} if the strings are identical. Finally, the routine {\tt outsidelong(...)} can be used to find the projections of the relative momentum in the pair frame from two four vectors ${\bf p}_a$ and ${\bf p}_b$. The header file {\tt src/Utilities/Misc/misc.h} has the following prototypes:\\
+{\tt
+\tab void lorentz(double *u,double *p1,double *p1prime);\\
+\tab double cgc(double j1,double m1,double j2,double m2,double j,double m);\\
+\tab bool comparestrings(char *s1,char *s2);\\
+\tab double triangle(double m0,double m1,double m2);\\
+\tab void outsidelong(double *pa,double *pb,\\
+\tab\tab double \&qinv,double \&qout,double \&qside,double \&qlong);}\\
+which are hopefully self-explanatory. Note that {\tt outsidelong} includes the outwards boost which makes $q_{\rm inv}^2=q_{\rm out}^2+q_{\rm side}^2+q_{\rm long}^2$. Thus, the returned value of $q_{\rm out}$ is shorter by a factor $\gamma=(1-v_\perp^2)^{-1/2}$ than what most experimental groups use for their conventions. Also, the canonical relative momentum is used, $q=(1/2)(p_a'-p_b')$ in the pair frame. This also differs from the usual convention for $\pi\pi$ interferometry, but follows the convention used for most other correlations such as $pp$ analyses.
+
+Special functions include spherical harmonics, Legendre Polynomials, Cartesian Harmonics, Coulomb wave functions and a variety of Bessel functions, which are all defined in {\tt src/Utilities/SpecialFunctions/sf.h}. Many of the special functions are simply {\bf GSL} routines in disguise.
+
+Legendre polynomials and spherical harmonics are functions of the namespace {\tt SpherHarmonics}:
+
+{\tt namespace SpherHarmonics\{\\
+\tab double legendre(int ell,double ctheta);\\
+\tab complex <double> Ylm(int ell,int m,double theta,double phi);\\
+\}}\\
+
+Bessel functions are incorporated as a namespace, with the function names being self-explanatory:
+
+{\tt
+namespace Bessel\{\\
+\tab double J0(double x);\\
+\tab double J1(double x);\\
+\tab double Jn(int n, double x);\\
+\\
+\tab double K0(double x);\\
+\tab double K1(double x);\\
+\tab double Kn(int n, double x);\\
+\\
+\tab double Y0(double x);\\
+\tab double Y1(double x);\\
+\tab double Yn(int n, double x);\\
+\\
+\tab double I0(double x);\\
+\tab double I1(double x);\\
+\tab double In(int n, double x);\\
+\\
+\tab double j0(double x);\\
+\tab double j1(double x);\\
+\tab double jn(int n, double x);\\
+
+\tab double y0(double x);\\
+\tab double y1(double x);\\
+\tab double yn(int n, double x);\\
+\\
+\tab complex<double> h0(double x);\\
+\tab complex<double> h1(double x);\\
+\tab complex<double> hn(int n, double x);\\
+
+\tab complex<double> hstar0(double x);\\
+\tab complex<double> hstar1(double x);\\
+\tab complex<double> hstarn(int n, double x);\\
+\};}\\
+
+The namespace {\tt CoulWave} provides functions for calculating Coulomb partial waves. Here, {\tt CWincoming} and {\tt CWoutgoing} are the incoming/outgoing waves defined in terms of the regular and irregular solutions $F_L\pm iG_L$ respectively. The gamma function of a complex argument $\Gamma(z)$ is {\tt cgamma()}.\\
+{\tt
+namespace CoulWave\{\\
+\tab void GetFG(int L,double x,double eta,double *FL,double *GL);\\
+\tab void GetFGprime(int L,double x,double eta,double *FL,double *GL,\\
+\tab \tab double *FLprime,double *GLprime);\\
+\tab complex<double> CWincoming(int ell,double x,double eta);\\
+\tab complex<double> CWoutgoing(int ell,double x,double eta);\\
+\tab complex<double> cgamma(complex<double> cx);\\
+\tab void phaseshift\_CoulombCorrect(int ell,double q,double eta,\\
+					\tab \tab double \&delta,double \&ddeltadq);\\
+\};}\\ \noindent
+Here, the function {\tt phaseshift\_CoulombCorrect} provides a {\bf crude} way to scale phase shifts to account for their distortion due to the Coulomb interaction. In many instances, models or parameterizations provide phase shifts assuming there is no Coulomb interaction, e.g., $\delta_s\sim qa$. This correction assumes that $\tan\delta_{\rm with Coul.}=\tan\delta_{\rm no Coul.}\cdot{\rm Gamow}_\ell(q)$, where the Gamow factor is $F_\ell(q,r=0)/qr|^2$ for a Coulomb wave function.
+
+Cartesian harmonic functions are included as a class rather than as a namespace for the sake of efficiency. Since many of the calculations use binomial and trinomial distributions, and since the {\tt overlap} function might be used repeatedly, arrays are strategically stored so that subsequent calls can be performed more quickly. The public members of the {\tt CCHCalc} object are:\\
+{\tt
+class CCHCalc\{\\
+\tab public:\\
+\tab \tab CCHCalc();\\
+\tab \tab $\sim$CCHCalc();\\
+\tab \tab double GetAFromE(int lx,int ly,int lz,double ex,double ey,double ez);\\
+\tab \tab double GetAFromThetaPhi(int lx,int ly,int lz,double theta,double phi);\\
+\tab \tab double GetMFromE(int lx,int ly,int lz,double ex,double ey,double ez);\\
+\tab \tab double GetMFromThetaPhi(int lx,int ly,int lz,double theta,double phi);\\
 
-\subsection{Compiling \coral}
+\tab \tab double GetOverlap(int lx,int ly,int lz,int lxprime,int lyprime,int lzprime);\\
+\tab \tab double GetOverlap0(int lx,int ly,int lz,int lxprime,int lyprime,int lzprime);\\
 
-\coral will not function without the installation of the GSL (Gnu Scientific Library). This can be found by first dialing into:\\
-\tab http://www.gnu.org/software/gsl\\
-{\bf GSL} routines are used for random numbers, Bessel functions, Coulomb wave functions, spherical harmonics and Clebsch-Gordan coefficients. The code is only tested for the GNU compiler (g++, version 4.0 or higher). {\bf GSL} and g++ are available for Linux, Windows and Mac OS X. Rather than using makefiles, \coral uses a replacement for the {\tt make} command, {\tt scons}, which provides a simple means to ensure that object files, libraries, and executables are recompiled on a must-compile basis. The package is available at:\\
-\tab http://www.scons.org\\
+\tab \tab double Factorial(int n);\\
+\tab \tab double DoubleFactorial(int n);\\
+\tab \tab double Binomial(int lx,int ly);\\
+\tab \tab double Trinomial(int lx,int ly,int lz);\\
+\};}\\ \noindent
+Here, the {\tt GetA...} functions give the Cartesian harmonics ${\cal A}_{\vec{\ell}}$ as functions of either $\cos\theta$ and $\phi$ or in terms of unit vector components $e_x,e_y,e_z$. The {\tt GetM} functions are simply moments of unit-vector components, $M_{\vec{\ell}}=e_x^{\ell_x}e_y^{\ell_y}e_z^{\ell_z}$. Unlike spherical harmonics, Cartesian harmonics are not orthogonal, and {\tt GetOverlap0(...)} and {\tt GetOverlap(...)} return $(1/4\pi)\int d\Omega A_{\vec{\ell}}(\Omega)A_{\vec{\ell}'}(\Omega)$. The function {\tt GetOverlap(...)} stores the calculated values, creating the needed memories as they are calculated. This saves time but can use significant memory if one is calculating for $\ell\ge 50$. Thus, if one only plans to calculate a few overlaps, one should use {\tt GetOverlap0(...)}. Binomial, factorial and trinomial functions also used stored values for increased speed.
 
-\coral Compilation requires a few environmental variables, which allow \coral to find header files, source files and libraries. These variables are:\vspace*{-8pt}
-\begin{center}
-\begin{tabular}{|r|c|l|} \hline
-VARIABLE & DESCRIPTION & EXAMPLE \\ \hline
-{\tt CORAL\_HOME} & base directory, where {\tt src/}, {\tt include/}, {\tt examples}... reside & {\tt /Users/Barbara/CorAL/} \\ \hline
-{\tt CORAL\_GSLPATH}& root of {\tt ../lib/gsl} and {\tt ../include/gsl} & {\tt /usr/local/} \\ \hline
-{\tt CORAL\_X11PATH}& root of {\tt ../lib/X11} and {\tt ../include/X11} & {\tt /usr/X11R6/} \\ \hline
-{\tt CORAL\_CCFLAGS} & optimization flags for g++ & {\tt -O2} \\ \hline
-\end{tabular}
-\end{center}
-\vspace*{-8pt}
-\noindent
-If the environment variables are not set, \coral will do its best to guess the appropriate values given your operating system. ?????? can it even guess CORAL\_HOME ???????
 
-To compile the libraries, one need only go into the \coral ~home directory enter:\\
-\verb!~!{\sl /CorAL\%}~{\tt scons}\\
-If all works, the code will be compiled and three static libraries will appear in {\tt lib/}: {\tt libcoral.a}, {\tt libcoralutils.a} and {\tt libxgraph.a}. The xgraph library is non-essential and is mainly used for the code tests, so if it fails to compile, or if you simply have no need for it, you can delete the one pertinent line in the {\tt SConstruct} file in the \coral ~home directory. 
-
-\subsection{Code Tests and Examples}
-
-For the purpose of testing \coral , several source files are located in the {\tt codetests/} directory. After changing into that directory, one can enter:\\
-\verb!~!{\sl CorAL/codetests\%}{\tt \%~scons wftestX}\\
-which will create the executable {\tt wftestX}. Running this should open an X-window comparing a stored $pp$ correlation function with one being calculated by {\tt wftestX}. The procedure can be repeated with several other files in {\tt codetests/}.
-
-The \coral\ package includes a {\tt examples/} directory. Within that directory are several example codes. With these codes you can additionally 
-
-
-
-To incorporate \coral\ functionality into your code, you need only add an include statement to your code, then compile. If you wish to use the static \coral\ library ({\tt libcoral.a} in {\tt lib/}), you need to add the line:\\
-\tab {\tt \#include "coral.h"}\\
-to the beginning of your source code, then compile with the command:\\
-\tab {\tt g++ -I \$\{CORALHOME\}/include -L \$\{CORALHOME\}/lib -lcoral -lgsl
--lgslcblas myprog.cc -o myprog},\\
-where {\tt CORALHOME} is the root \coral\ directory. If you would prefer to recompile the source code along with your main program, you would add the line:\\
-\tab {\tt \#include "coral.cc"}\\
-to your main routine rather than {\tt coral.h}, and compile with the command:\\
-\tab {\tt g++ -I \$\{CORALHOME\}/include -lgsl -lgslcblas myprog.cc -o myprog},\\
-The codes in the {\tt sample/} directory can be compiled with {\tt make} (e.g. {\tt make wfsample}) using the {\tt makefile} found in that directory. The header file {\tt coral.h} simply contain include statements to the remaining headers.
-
-
-
-The result of the compilation will be a shared library file {\tt libcoral.a} which will reside in the {\tt lib} directory. The {\tt make} command will also copy all header and source files from the {\tt src/} tree into the {\tt include/} directory (unless new versions already exist). If new source files are added to the {\tt src} directory, the makefile must be edited. To make a new makefile, simply run the shell script:\\
-\tab {\tt makemaker.sh > makefile},\\
-then change the {\tt \$\{OPT\}} variable in the makefile if needed. In the makefile in the {\tt samples/} directory, one can also recompile the source with command {\tt make coral}, which changes to the {\tt lib/} directory, compiles \coral\ and returns to the original directory.
-
-Not all source code found in the {\tt src/} tree is compiled into \coral, although any {\tt *.cc} or {\tt *.h} file will be used as a dependency in the makefile. If you add source files, they should be listed with an include statement in one of the following source and header files which are included in the compilation: {\tt coral.cc \tt coral.h \tt misc.cc, misc.h, arrays.cc, arrays.h, sf.cc, sf.h, parametermap.cc, parametermap.h, wavefunction.cc, wavefunction.h, source2CF.cc, source2CF.h, kernel.cc, kernel.h}. For instance, if you add a new source file, {\tt wf\_lambdaxi.cc}, which is used to calculate wave functions for $\Lambda$s and $\Xi$s, you would add a line to the  file {\tt wavefunction.cc} so that it would become:\\
-\tab {\tt \#include "wavefunction.h"}\\
-\tab {\tt \#include "wfcommon.cc"}\\
-\tab {\tt \#include "planewave.cc"}\\
-\tab {\tt \#include "partwave.cc"}\\
-\tab {\tt \#include "pipi\_phaseshifts.cc"}\\
-\tab {\tt \#include "wf\_pp.cc"}\\
-\tab {\tt \#include "wf\_pkplus.cc"}\\
-\tab {\tt \#include "wf\_pipluspiplus.cc"}\\
-\tab {\tt \#include "wf\_pipluspiminus.cc"}\\
-\tab {\tt \#include "wf\_nn.cc"}\\
-\tab {\tt \#include "wf\_lambdaxi.cc}\\
-In fact, there do exist several {\tt wf\_...} files in the {\tt src/} tree which are not included as they are either in development or are untested.
-
-\section{Known Issues}
-
-{\bf GSL} has a bug in the Coulomb partial wave routines for versions 1.7 and earlier. The sign of the wave function for larger ($>$3) values of $x=qr/\hbar$ oscillates between the correct and incorrect sign. The authors have provided a fix to the source code (see below). If you do not have this fix to {\bf GSL}, you can edit the file {\tt src/'/SpecialFunctions/CoulWave/coulwave.cc} and comment away the line {\tt \#define NO\_GSLCOULWAVE\_BUG}. If you want to change the {\bf GSL} source file, then recompile, a bug fix was provided by the author and is described in the text file "gslbugfix.txt" which is included in  {\tt doc/}.
-
-\section{Parameter files}
-\coral \ uses its own input and parameter file format for controlling both the executables distributed with \coral \ and many of the subroutines in the \coral \ library itself.  The main use of files in the \coral \ format is to populate instances of the associative array class called {\tt parameterMap} (defined in the {\tt parameter\_map.h} file).  The data types supported by \coral \ are given in Table \ref{table:types}.  \coral's general format is straightforward and consists of a few variations:
-\begin{itemize}
-	\item {\bf simple}: used for simple scalar data or small strings and has the format:\\
-			\hspace*{0.25 in}{\tt type   name   value}\\
-	For example:\\
-			\hspace*{0.25 in}{\tt int   lmax   2\\
-			\hspace*{0.25 in}string	filename	output.dat	}\\
-	Note, strings do not need to be quoted and whitespace separates each token.
-	\item {\bf multi-line}: used for vectors and lists and has the format:\\
-			\hspace*{0.25 in}{\tt type   name   \{}\\
-			\hspace*{0.5 in}{\tt value0}\\
-			\hspace*{0.5 in}{\tt value1}\\
-			\hspace*{0.5 in}{\tt ...}\\
-			\hspace*{0.25 in}{\tt \}}\\
-	Again, strings do not need to be quoted and whitespace separates each token.  In the array, each value is given on its own line.  The dimension of the vector is computed from the length of the vector.
-	\item {\bf extended multi-line}: used for matrices exclusively and have the form\\
-			\hspace*{0.25 in}{\tt type   name   \{}\\
-			\hspace*{0.5 in}{\tt value00 value01 value02 ...}\\
-			\hspace*{0.5 in}{\tt value10 value11 value12 ...}\\
-			\hspace*{0.5 in}{\tt ...}\\
-			\hspace*{0.25 in}{\tt \}}\\
-	We assume that the matrices are rectangular and get the dimensions for the matrix from the number of columns in the first line and the number of rows in the entire data structure.  We do not check that each line has the proper number of elements in it.
-	\item {\bf nested multi-line}: used for storing {\tt parameterMap}s and may contain any simple, multi-line or extended multi-line inside.  The format is as follows:\\
-			\hspace*{0.25 in}{\tt type   name   \{}\\
-			\hspace*{0.5 in}{\tt subtype0 subname0 subvalue0}\\
-			\hspace*{0.5 in}{\tt subtype1 subname1 \{ }\\
-			\hspace*{0.75 in}{\tt value11}\\
-			\hspace*{0.75 in}{\tt ...}\\
-			\hspace*{0.5 in}{\tt \} } \\
-			\hspace*{0.5 in}{\tt ...}\\
-			\hspace*{0.25 in}{\tt \} }\\
-	The order of items in a {\tt parameterMap} is not preserved so is not important for the input files.
-	\item {\bf comments}: If the character ``{\tt \#}'' is encountered, the remainder of the line is considered a comment.  For example:\\
-			\hspace*{0.25 in}{\tt \#int   lmax   0 \# the old value}\\
-			\hspace*{0.25 in}{\tt int   lmax   2 \# the new value}\\
-			\hspace*{0.25 in}{\tt string	filename	output.dat \# this is the output correlation}\\
-\end{itemize}
-
-\begin{table}
-	\begin{tabular}{lll}
-		\hline\hline
-		\coral\ type 	& C++ equivalent & Syntax \\ \hline \hline
-		{\tt bool}		& {\tt bool} & simple \\
-		{\tt int}		& {\tt int} & simple \\
-		{\tt double} 	& {\tt double} & simple  \\
-		{\tt string}		& {\tt std::string} & simple \\
-		{\tt vector\_bool}	& {\tt std:vector< bool > } & multi-line \\
-		{\tt vector\_int}		& {\tt std:vector< int > } & multi-line \\
-		{\tt vector\_double}	& {\tt std:vector< double > } & multi-line \\
-		{\tt vector\_string}	& {\tt std:vector< std::string > }  & multi-line\\
-		{\tt matrix\_double} 	& {\tt std:vector< std:vector< double > > }  & extended  multi-line\\
-		{\tt parameter\_map}& {\tt parameterMap}& nested multi-line\\\hline
-	\end{tabular}
-	\caption{\label{table:types}Data types supported by \coral \  and their mappings onto C++ data structures inside \coral}
-\end{table}
-
-
-The follow set of tables, Tables \ref{}-\ref{}, detail the various input parameters in each class.
-
-\section{Sample codes}
-The main part of the project are the static libraries in the {\tt lib/} directory.  
-However, using them is not currently well documented, so we provide examples and 
-executables that use the libraries.  In the {\tt bin/} directory, there are several 
-executables.
-
-All have inline help (invoke using e.g. ``{\tt > crab -h}'').
-
-\begin{table}[htdp]
-\caption{supported particles and their keys}
-\begin{center}
-\begin{tabular}{|c|c|}
-"pi+"&\\
-"pi-"&\\
-"pi0"&\\
-"K+"&\\
-"K-"&\\
-"p"&\\
-"n"&\\
-"Xi"&\\
-"lambda"&\\
-"antilambda"
-\end{tabular}
-\end{center}
-\label{supported particles}
-\end{table}%
-
-\begin{table}[htdp]
-\caption{supported pairs}
-\begin{center}
-\begin{tabular}{|c|c|} 
-pi+ pi+ *			& wf\_pipluspiplus\_nostrong.cc               \\
-pi+ pi+ 			& wf\_pipluspiplus\_phaseshift.cc             \\
-pi+ pi+ 			& wf\_pipluspiplus\_sqwell.cc              \\   
-pi+ pi- 			& wf\_pipluspiminus\_phaseshift.cc            \\
-pi+ pi- 			& wf\_pipluspiminus\_sqwell.cc                \\
-pi+ pi-, K+ K- 		& wf\_pipluspiminus\_nostrong.cc             \\
-K+ pi+, K- pi-		& wf\_kpluspiplus\_sqwell.cc                  \\
-K+ pi-, K- pi+		& wf\_kpluspiminus\_phaseshift.cc            \\ 
-K+ pi-, K- pi+ 		& wf\_kpluspiminus\_sqwell.cc                 \\
-p pi+ 			& wf\_ppiplus\_phaseshift.cc\\
-p pi+ 			& wf\_ppiplus\_sqwell.cc\\
-p pi- 				& wf\_ppiminus\_sqwell.cc\\
-p K+  			& wf\_pkplus\_sqwell.cc\\
-p K+ 			& wf\_pkplus\_phaseshift.cc\\
-p p 				& wf\_pp\_phaseshift.cc\\
-p p 				& wf\_pp\_schrod.cc\\
-n n 				& wf\_nn\_phaseshift.cc            \\           
-p n  				& wf\_pn\_phaseshift.cc\\
-Lambda Lambda 	& wf\_lambdalambda\_phaseshift.cc             \\
-Lambda Lambda 	& wf\_lambdalambdaantiparspin\_phaseshift.cc \\ 
-Lambda Lambda 	& wf\_lambdalambdaparspin\_phaseshift.cc     \\ 
-p Lambda			& wf\_plambda\_phaseshift.cc\\
-Xi pi				& wf\_Xipi\_phaseshift.cc           
-\end{tabular}
-\end{center}
-\label{supported pairs * pi+ pi+ wave function and kernels are used for all identical meson pairs (e.g. K+ K+, pi- pi-, ...); pi0 pi0 correlations are essentially pure Bise-Einstein, so are analytic as are pi+ pi+ or pi- pi- when ignoring Coulomb repulsion.}
-\end{table}%
-
-
-
-
-
-\subsection{bfplot}
-The code {\tt bfplot} is a simple tool that produces linear interpolable tables of the basis functions of each basis.  Additionally, the {\tt -convolve} option allows us to fold the basis function with a kernel specified by the ``particles'' option in the input file.
-
-	\begin{table}[htdp]
-	\caption{Command line options for {\tt bfplot}, the widget to plot the basis functions using CorAL.  Usage: bfplot $<$option$>$ [inputFile.dat]}
-	\begin{center}
-	\begin{tabular}{|c|c|}
-		-h, -help, --help 	& All print this message, then quit \\
-	    	-legendre       		& Print out Legendre polynomial basis \\
-	    	-bspline        		& Print out Basis Spline basis \\
-	    	-laguerre       		& Print out Laguerre function basis \\
-	    	-chebyshev      		& Print out Chebyshev polynomial basis \\
-	    	-histogram      		& Print out Histogram basis \\
-	    	-hermite        		& Print out Hermite function basis \\
-	    	-convolve       		& Convolve basis funcs with kernel too
-	\end{tabular}
-	\end{center}
-	\label{bfplotCLOptions}
-	\end{table}%
-
-        \begin{table}
-            \begin{tabular}{lllll}
-                \hline\hline
-                Type & Map & Name & Default Value & Description \\
-                \hline\hline 
-                {\tt string} & inMap & particle1 & "pi+" & \\\hline
-                {\tt string} & inMap & particle2 & "pi+" & \\\hline
-                {\tt string} & inMap & basis\_func\_plot\_file & "output\_r\_basis\_funcs.dat" & \\\hline
-                {\tt string} & inMap & convoluted\_basis\_func\_plot\_file & "output\_q\_basis\_funcs.dat" & \\\hline
-                {\tt double} & inMap & qmin & 0.0 & \\\hline
-                {\tt double} & inMap & qmax & 100.0 & \\\hline
-                {\tt int} & inMap & l & 0 & \\\hline
-            \end{tabular}
-            \caption{Input file controls for {\tt bfplot} (src/bfplot/bfplot.cc). }
-        \end{table}
-
-
-
-
-\subsection{scplot}
-Similar to {\tt bfplot}, the {\tt scplot) is a simple tool to make linear interpolable tables of sources and correlations suitable for plotting.  Because each representation of the sources and correlations is a little different and there is no way to denote these in the CorAL input files, you must specify the representation on the command line using the options in the command line options table.
-
-	\begin{table}[htdp]
-	\caption{Command line options for {\tt scplot}, a widget to plot sources and correlation using CorAL.  Usage: scplot $<$option$>$ [inputFile.dat]}
-	\begin{center}
-	\begin{tabular}{|c|c|}
-		-h, -help, --help &  all print this message, then quit\\
-		-legendre       	& Print out using Legendre polynomial basis\\
-		-bspline        	& Print out using Basis Spline basis\\
-		-laguerre       	& Print out using Laguerre function basis\\
-		-chebyshev      & Print out using Chebyshev polynomial basis\\
-		-histogram      	& Print out using Histogram basis\\
-		-hermite        	& Print out using Hermite function basis\\
-		-gaussian       	& Print out using using Gaussian class\\
-		-correlation    	& inputFile.dat is a correlation, only histogram basis available\\
-		-3dsphr         	& inputFile.dat is a 3d object, in spherical harmonics\\
-		-3dcarthisto    	& inputFile.dat is a 3d Cartesian histogram object
-	\end{tabular}
-	\end{center}
-	\label{default}
-	\end{table}%
-
-        \begin{table}
-            \begin{tabular}{lllll}
-                \hline\hline
-                Type & Map & Name & Default Value & Description \\
-                \hline\hline 
-                {\tt string} & inMap & plot\_file & "output\_plot.dat" & \\\hline
-                {\tt string} & inMap & plot\_file\_x & "output\_plot\_x.dat" & \\\hline
-                {\tt string} & inMap & plot\_file\_y & "output\_plot\_y.dat" & \\\hline
-                {\tt string} & inMap & plot\_file\_z & "output\_plot\_z.dat" & \\\hline
-            \end{tabular}
-            \caption{Input file controls for {\tt scplot} (src/scplot/scplot.cc). }
-        \end{table}
-
-
-
-
-
-
-\subsection{chum}
-Make OSCAR formatted events from simple core-halo model
-CHUM: the Core-Halo Ur-Model
-
-
-{\tt Usage: chum <options> [inputFile.dat]}
- 
-
-        \begin{table}
-            \begin{tabular}{lllll}
-                \hline\hline
-                Type & Map & Name & Default Value & Description \\
-                \hline\hline 
-                {\tt double} & main & T & 175.0 & Core temperature (in MeV)\\\hline
-                {\tt double} & main & Rx & 4.0 & Core radius in x direction (in fm)\\\hline
-                {\tt double} & main & Ry & 4.0 & Core radius in y direction (in fm)\\\hline
-                {\tt double} & main & Rz & 4.0 & Core radius in z direction (in fm)\\\hline
-                {\tt double} & main & tau\_fo & 10.0 & Core freeze-out duration (in fm/c)\\\hline
-                {\tt double} & main & f & 1.0 & Core fraction\\\hline
-                {\tt int} & main & id & id & ??\\\hline
-                {\tt string} & main & flowprofile & flowprof & ??\\\hline
-                {\tt double} & main & etamin & etamin & ??\\\hline
-                {\tt double} & main & etamax & etamax & ??\\\hline
-                {\tt double} & main & ymin & ymin & ??\\\hline
-                {\tt double} & main & ymax & ymax & ??\\\hline
-                {\tt double} & main & pTmin & pTmin & ??\\\hline
-                {\tt double} & main & pTmax & pTmax & ??\\\hline
-                {\tt string} & main & filename &  & output file name\\\hline
-                {\tt int} & main & initial\_seed & 197 & an integer to serve as a random seed\\\hline
-                {\tt int} & main & num\_particles & 100000 & number of particles to sample\\\hline
-            \end{tabular}
-            \caption{ src/chum/chum.cc }
-        \end{table}
-
-
-\subsection{shark}
-
-Simple HARmonic Kernels (SHARK)  is a tool to pregenerate the full 3D kernel, expanded in Legendre polynomials, 
-for use in Harmonic expansions of the sources and correlations.
-        \begin{table}
-            \begin{tabular}{lllll}
-                \hline\hline
-                Type & Map & Name & Default Value & Description \\
-                \hline\hline 
-                {\tt string} & main & kernel\_particle1 & ``'' & \\\hline
-                {\tt string} & main & kernel\_particle2 & ``'' & \\\hline
-            \end{tabular}
-            \caption{Input file options for Simple HARmonic Kernels (SHARK) using CorAL (src/shark/shark.cc). Usage: shark $<$option$>$ [inputFile.dat]}
-            \label{sharkCLOptions}
-        \end{table}
-
-
-\subsection{crab}
-reimagining of S. Pratt's CoRrelation AfterBurner
-
-{\tt Usage: crab <mode> [inputFile.dat]}
-\begin{table}[htdp]
-\caption{default}
-\begin{center}
-\begin{tabular}{|c|c|}
-	-1doldway		& Generate 1d source and correlation, using old code for source\\
-	-3dcart       	& Generate 3d source and correlation directly in Cartesian\\
-	-3dcart\_ex    	& Generate 3d source and correlation directly in Cartesian, then expand\\
-	-3dsphr       	& Generate 3d source and correlation directly in Ylm's\\
-	-crab        	 	&  Generate 1d \& 3d correlations and output them in the style of Scott Pratt's CRAB code\\
-	-sourcemaker  	& Generate 1d source \& 3d source slices and output them in the style of Dave Brown's SourceMaker code\\
-	-skip\_correlation  & Skip generation of the correlations if accompanying modes would generate them\\
-	-make\_plots   & Make plots for all the sources and correlations generated\\
-\end{tabular}
-\end{center}
-\label{crabCLOptions}
-\end{table}
-
-        \begin{table}
-            \begin{tabular}{lllll}
-                \hline\hline
-                Type & Map & Name & Default Value & Description \\
-                \hline\hline 
-                \multicolumn{5}{l}{mode {\tt-1d}: Generate 1d source and correlation}\\ \hline
-                {\tt string} & main & source\_file & "output\_source\_1d.dat" & \\\hline
-                {\tt string} & main & correlation\_file & "output\_correlation\_1d.dat" & \\\hline
-                {\tt parameterMap} & main & source\_settings & None & \\\hline
-                {\tt string} & main & source\_file & "output\_source\_1d.dat" & \\\hline
-                {\tt string} & main & correlation\_file & "output\_correlation\_1d.dat" & \\\hline
-                {\tt string} & main & source\_file & "output\_source\_3d.dat" & \\\hline
-                {\tt string} & main & correlation\_file & "output\_correlation\_3d.dat" & \\\hline
-                {\tt string} & main & source\_file\_cart & "output\_source\_3d\_cart.dat" & \\\hline
-                {\tt string} & main & source\_file & "output\_source\_3d\_sphr.dat" & \\\hline
-                {\tt string} & main & correlation\_file & "output\_correlation\_3d\_cart.dat" & \\\hline
-                {\tt string} & main & crab\_correlation\_1d\_filename & "correlation\_qinv.dat" & \\\hline
-                {\tt string} & main & crab\_correlation\_3d\_filename & "correlation\_qinv3d.dat" & \\\hline
-            \end{tabular}
-            \caption{ src/crab/crab.cc }
-        \end{table}
-
-\subsection{converts2c}
-fold a source w/ kernel to make a correlation
-
-\begin{table}[htdp]
-\caption{Widget to Convert Sources to Correlations (ConvertS2C) using CorAL.  Usage: converts2c $<$option$>$ [inputFile.dat]}
-\begin{center}
-\begin{tabular}{|c|c|}
-	-h, -help, --help & all print this message, then quit\\
- 	-legendre   &    inputFile.dat uses Legendre polynomial basis\\
-	-bspline      &  inputFile.dat uses Basis Spline basis\\
-	-laguerre     &  inputFile.dat uses Laguerre function basis\\
-	-chebyshev  &    inputFile.dat uses Chebyshev polynomial basis\\
-	-histogram    &  inputFile.dat uses Histogram basis\\
-	-hermite      &  inputFile.dat uses Hermite function basis\\
-	-gaussian    &   inputFile.dat is a 1d Gaussian\\
-	-3d           &  inputFile.dat is a 3d source\\
-	-convolve   &    Use convoluter, not imager for this (uncertainty not included)
-\end{tabular}
-\end{center}
-\label{converts2cCLOptions}
-\end{table}
-
-
-\subsection{diver}
-source imaging code
-
-\begin{table}[htdp]
-\caption{Demonstration InVERter: a CorAL imaging code.  Usage:  diver [mode] $<$input file$>$}
-\begin{center}
-\begin{tabular}{|c|c|}
-	-help & help message \\
-	-bspline	& Use Basis Spline basis for source\\
-	-chebyshev	& Use Chebyshev polynomial basis for source\\
-	-hermite	& Use Hermite polynomial basis for source\\
-	-histogram	& Use Histogram basis for source\\
-	-laguerre	& Use Laguerre polynomial basis for source\\
-	-legendre	& Use Legendre polynomial basis for source\\
-	-norestore	& Don't restore the correlation\\
-	-restore	& Restore the correlation\\
-	-1d	& Problem is 1d\\
-	-3d	& Problem is 3d
-\end{tabular}
-\end{center}
-\label{default}
-\end{table}%
-
-        \begin{table}
-            \begin{tabular}{lllll}
-                \hline\hline
-                Type & Map & Name & Default Value & Description \\
-                \hline\hline 
-                {\tt string} & main & correlation\_file & None & \\\hline
-                {\tt string} & main & imaged\_source\_file & None & \\\hline
-                {\tt string} & main & restored\_correlation\_file & None & \\\hline
-                {\tt parameterMap} & main & source\_settings & None & \\\hline
-                {\tt parameterMap} & main & source\_settings & None & \\\hline
-            \end{tabular}
-            \caption{ src/diver/diver.cc }
-        \end{table}
-
-\section{Parameter map reference}
-
-\subsection{1d Function Parameterizations/Basis Functions}
-
-        \begin{table}
-            \begin{tabular}{lllll}
-                \hline\hline
-                Type & Map & Name & Default Value & Description \\
-                \hline\hline 
-                {\tt int} & s & l & l & \\\hline
-                {\tt int} & s & m & m & \\\hline
-                {\tt bool} & s & realpart & realpart & \\\hline
-                {\tt bool} & s & imagpart & !realpart & \\\hline
-                {\tt int} & s & lx & lx & \\\hline
-                {\tt int} & s & ly & ly & \\\hline
-                {\tt int} & s & lz & lz & \\\hline
-                {\tt bool} & s & spherical\_harmonic & sphrHarm & \\\hline
-                {\tt bool} & s & cartesian\_harmonic & !sphrHarm & \\\hline
-            \end{tabular}
-            \caption{ (src/coral/ObjectInterfaces/objects1d.cc)}
-        \end{table}
- 
-         \begin{table}
-            \begin{tabular}{lllll}
-                \hline\hline
-                Type & Map & Name & Default Value & Description \\
-                \hline\hline 
-                {\tt int} & com & ndata & data.dim & \\\hline
-                {\tt matrix\_double} & com & covmtx\_datablock & empty\_mat & \\\hline
-                {\tt vector\_double} & com & y\_datablock & empty\_vec & \\\hline
-                {\tt matrix\_double} & com & ydy\_datablock & empty\_mat & \\\hline
-            \end{tabular}
-            \caption{(src/coral/ObjectInterfaces/dataset.cc)}
-        \end{table}
-        
-
-       \begin{table}
-            \begin{tabular}{lllll}
-                \hline\hline
-                Type & Map & Name & Default Value & Description \\
-                \hline\hline 
-                \multicolumn{4}{c}{All Basis Function classes inherit these (src/coral/ObjectInterfaces/func\_expansion1d.cc )}\\\hline
-                {\tt double} & m & xmin & xmin & \\\hline
-                {\tt double} & m & xmax & xmax & \\\hline
-                \multicolumn{4}{c}{(WHAT HAPPENED TO ORTHOGFUN\_EXPANSION?)}\\\hline
-           	\multicolumn{4}{c}{(src/coral/ObjectInterfaces/generic\_spline1d.cc)}\\\hline
-                {\tt int} & m & spline\_degree & 3 & \\\hline
-                {\tt vector\_double} & m & knots\_datablock & empty\_vec & \\\hline
-                \multicolumn{4}{c}{(WHAT HAPPENED TO BSPLINE?)}\\\hline
-                \multicolumn{4}{c}{(src/coral/ObjectInterfaces/histogram1d.cc)} \\\hline
-                {\tt bool} & m & fixed\_width\_bins & fixed\_width\_bins & \\\hline
-                {\tt double} & m & dx & None & \\\hline
-                {\tt double} & m & xmax & None & \\\hline
-                {\tt vector\_double} & m & knots & empty\_vec & \\\hline
-                {\tt matrix\_double} & m & xy\_datablock & empty\_mat & \\\hline
-                {\tt matrix\_double} & m & xydy\_datablock & empty\_mat & \\\hline
-            	\multicolumn{4}{c}{(WHAT HAPPENED TO CHEBYSHEV?)}\\\hline
-            	\multicolumn{4}{c}{(WHAT HAPPENED TO LEGENDRE?)}\\\hline
-            	\multicolumn{4}{c}{(src/coral/ObjectInterfaces/hermitefunction\_expansion1d.cc)}\\\hline
-                {\tt double} & m & xscale & xscale & \\\hline
-            	\multicolumn{4}{c}{(src/coral/ObjectInterfaces/laguerrepoly\_expansion1d.cc)}\\\hline
-                {\tt double} & m & xscale & xscale & \\\hline
-            \end{tabular}
-        \end{table}
-
-
-\subsection{Fitting classes (using MINUIT)}
- 
-        \begin{table}
-            \begin{tabular}{lllll}
-                \hline\hline
-                Type & Map & Name & Default Value & Description \\
-                \hline\hline 
-             	\multicolumn{4}{l}{ (src/coral/CF2Source/minuitstuff/sfit\_minuit\_3dgaussian.cc) }\\\hline
-               	{\tt double} & sourcecalc$->$spars & lambda & 1 & \\\hline
-                {\tt double} & sourcecalc$->$spars & Rx & 5 & \\\hline
-                {\tt double} & sourcecalc$->$spars & Ry & 5 & \\\hline
-                {\tt double} & sourcecalc$->$spars & Rz & 5 & \\\hline
-                {\tt double} & sourcecalc$->$spars & Xoff & 0 & \\\hline
-            	\multicolumn{4}{l}{ (src/coral/CF2Source/minuitstuff/sfit\_minuit\_blast.cc) }\\\hline
-                {\tt double} & sourcecalc$->$spars & lambda & 1 & \\\hline
-                {\tt double} & sourcecalc$->$spars & R & 13.0 & \\\hline
-                {\tt double} & sourcecalc$->$spars & Tau & 12.0 & \\\hline
-                {\tt double} & sourcecalc$->$spars & DelTau & 5 & \\\hline
-            	\multicolumn{4}{l}{ ( src/coral/CF2Source/sfit\_3dgaussian.cc) }\\\hline
-                {\tt double} & sourcecalc$->$spars & lambda & 0.5 & \\\hline
-                {\tt double} & sourcecalc$->$spars & Rx & 5 & \\\hline
-                {\tt double} & sourcecalc$->$spars & Ry & 5 & \\\hline
-                {\tt double} & sourcecalc$->$spars & Rz & 5 & \\\hline
-                {\tt double} & sourcecalc$->$spars & Xoff & 0.0 & \\\hline
-             	\multicolumn{4}{l}{ (src/coral/CF2Source/sfit\_blast.cc) }\\\hline
-                {\tt double} & sourcecalc$->$spars & lambda & 1 & \\\hline
-                {\tt double} & sourcecalc$->$spars & R & 13 & \\\hline
-                {\tt double} & sourcecalc$->$spars & Tau & 12 & \\\hline
-                {\tt double} & sourcecalc$->$spars & DelTau & 5 & \\\hline
-           	\multicolumn{4}{l}{ src/coral/CF2Source/minuitstuff/sfit\_minuit\_GX1d.cc) }\\\hline
-                {\tt double} & sourcecalc$->$spars & lambdaG & 0.6 & \\\hline
-                {\tt double} & sourcecalc$->$spars & Xfrac & 0.5 & \\\hline
-                {\tt double} & sourcecalc$->$spars & R & 5 & \\\hline
-                {\tt double} & sourcecalc$->$spars & X & 10 & \\\hline
-                {\tt double} & sourcecalc$->$spars & a & 5 & \\\hline
-            	\multicolumn{4}{l}{ src/coral/CF2Source/sfit\_GX1d.cc) }\\\hline
-                {\tt double} & sourcecalc$->$spars & lambdaG & 0.3 & \\\hline
-                {\tt double} & sourcecalc$->$spars & R & 5 & \\\hline
-                {\tt double} & sourcecalc$->$spars & lambdaX & 0.3 & \\\hline
-                {\tt double} & sourcecalc$->$spars & X & 10.0 & \\\hline
-                {\tt double} & sourcecalc$->$spars & a & 5.0 & \\\hline
-            \end{tabular}
-            \caption{Source fitting input parameters.}
-            \label{sfitParameters}
-        \end{table}
-        
-\subsection{Kernels and Wavefunctions}
-
-\subsection{1d source functions}
- 
+%----------------------------------------------------------------------------------------
+\addcontentsline{toc}{section}{References}
+%----------------------------------------------------------------------------------------
 \begin{thebibliography}{99}
+
 \bibitem{Lisa:2005dd}M.~A.~Lisa, S.~Pratt, R.~Soltz and U.~Wiedemann,
   %``Femtoscopy in relativistic heavy ion collisions,''
   arXiv:nucl-ex/0505014.
   %%CITATION = NUCL-EX 0505014;%%
+
 \end{thebibliography}
 
 \end{document}
