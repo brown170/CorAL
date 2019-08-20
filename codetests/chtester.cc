@@ -1,29 +1,29 @@
 // <<BEGIN-copyright>>
-// 
+//
 //                 The GNU General Public License (GPL) Version 2, June 1991
-// 
-// Copyright (c) 2013, Lawrence Livermore National Security, LLC. Produced at the Lawrence 
-// Livermore National Laboratory. Written by Ron Soltz (soltz1@llnl.gov), David A. Brown 
+//
+// Copyright (c) 2013, Lawrence Livermore National Security, LLC. Produced at the Lawrence
+// Livermore National Laboratory. Written by Ron Soltz (soltz1@llnl.gov), David A. Brown
 // (dbrown@bnl.gov) and Scott Pratt (pratts@pa.msu.edu).
-// 
-// CODE-CODE-643336 All rights reserved. 
-// 
+//
+// CODE-CODE-643336 All rights reserved.
+//
 // This file is part of CorAL, Version: 1.17.
-// 
+//
 // Please see the file LICENSE.TXT in the main directory of this source code distribution.
-// 
-// This program is free software; you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License (as published by the Free Software Foundation) version 2, 
+//
+// This program is free software; you can redistribute it and/or modify it under the terms of
+// the GNU General Public License (as published by the Free Software Foundation) version 2,
 // dated June 1991.
-// 
-// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-// without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the IMPLIED WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the terms and conditions of the GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License along with this program; 
-// if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, 
+//
+// You should have received a copy of the GNU General Public License along with this program;
+// if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 // MA 02111-1307 USA
-// 
+//
 // <<END-copyright>>
 #include <cstdlib>
 #include <cmath>
@@ -33,7 +33,7 @@
 #include "arrays.h"
 #include "random.h"
 #include "misc.h"
-#include "parameterMap.h"
+#include "parametermap.h"
 
 #define CHECKMULTDIV
 #define CHECKXCONV
@@ -72,7 +72,7 @@ int main(){
     if(ex*ex+ey*ey>1.0) goto TRY_AGAIN;
     ez=sqrt(1.0-ex*ex-ey*ey);
     printf("ex=%g, ey=%g, ez=%g, e^2=%g\n",ex,ey,ez,ex*ex+ey*ey+ez*ez);
-  
+
     //printf("Enter lx, ly and lz : ");
     //scanf("%d %d %d",&lx,&ly,&lz);
     lx=2;
@@ -84,10 +84,10 @@ int main(){
 
     expansion=chcalc.GetMFromE(lx,ly,lz,ex,ey,ez);
     printf("M=%12.5e, ",expansion);
-    
+
     expansion=chcalc.GetAFromE(lx,ly,lz,ex,ey,ez);
     printf("A=%12.5e\n",lfact*expansion);
-    
+
     //
 
     M->ZeroArray(ir);
@@ -98,15 +98,15 @@ int main(){
     A->IncrementAExpArrayFromE(ex,ey,ez,1.0,ir);
     //A->CalcAExpArrayFromE(ex,ey,ez,ir);
     printf("A=%12.5e\n",A->GetElement(lx,ly,lz,ir));
-      
+
     //
 
     expansion=A->GetMElementFromAExpArray(lx,ly,lz,ir);
     printf("M=%12.5e, ",expansion);
-    
+
     expansion=M->GetAExpElementFromMArray(lx,ly,lz,ir);
     printf("A=%12.5e\n",expansion);
-    
+
     //
 
     printf("check Moment<->AArray conversion\n");
@@ -136,7 +136,7 @@ int main(){
     printf("_________ check XExp conversions ___________\n");
     X=new CCHArray(4,NRADIAL,1.0,XSYM,YSYM,ZSYM);
     BB=new CCHArray(36,1,1.0,XSYM,YSYM,ZSYM);
-    X->Randomize(0.4,ir); 
+    X->Randomize(0.4,ir);
     X->FillRemainderX(ir);
     X->SetElement(0,0,0,ir,1.0);
     printf("                X=%12.5e\n",X->GetElement(lx,ly,lz,ir));
@@ -167,7 +167,7 @@ int main(){
     ArrayCalc::Detrace(M,ir,A,ir);
     expansion=A->AExpand(ex,ey,ez,ir);
     printf("=? %g\n",expansion);
-  
+
 #ifdef CHECKMULTDIV
     printf("_______________________________________\n");
     printf("Now check Multiplication and Division\n");
