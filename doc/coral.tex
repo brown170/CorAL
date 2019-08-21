@@ -338,10 +338,14 @@ These are more complex tests that check whether components of \coral\ work toget
 \coral \ uses its own input and parameter file format for controlling both the executables distributed with \coral \ and many of the subroutines in the \coral \ library itself.  The main use of files in the \coral \ format is to populate instances of the associative array class called {\tt parameterMap} (defined in the {\tt parameter\_map.h} file).  The data types supported by \coral \ are given in Table \ref{table:types}.  \coral's general format is straightforward and consists of a few variations:
 \begin{itemize}
 	\item {\bf simple}: used for simple scalar data or small strings and has the format:\\
-			\hspace*{0.25 in}{\tt type   name   value}\\
-	For example:\\
-			\hspace*{0.25 in}{\tt int   lmax   2\\
-			\hspace*{0.25 in}string	filename	output.dat	}\\
+	\begin{minted}{applescript}
+        [type]   [name]   [value]
+	\end{minted}
+	For example:
+	\begin{minted}{applescript}
+        int  lmax   2
+        string  filename  output.dat
+	\end{minted}
 	Note, strings do not need to be quoted and whitespace separates each token.
 	\item {\bf multi-line}: used for vectors and lists and has the format:\\
 			\hspace*{0.25 in}{\tt type   name   \{}\\
@@ -646,6 +650,76 @@ tells you other things crab is supposed to do
             \end{tabular}
             \caption{ src/crab/crab.cc }
         \end{table}
+
+\begin{minted}[fontsize=\footnotesize]{applescript}
+# Details of phase-space distribution we're working on.
+string  oscar_file test_phasemaker_output_oscar.dat  # The OSCAR formatted file containing freeze-out points
+int     pid 211                                      # The Monte-Carlo ID for the particle of interest 
+                                                     # (211=pi+, see the Particle Data Group)
+int     max_number_pairs 10000000                    # Number of pairs to use to construct C(q) & S(r)
+double  q_cut_oscar 60.0                             # When constructing the correlations, ignore pairs with qinv>q_cut_oscar
+
+# Stuff to initialize the source we're going to use to build the correlation with
+string  source_file test_crab_output_source.dat      # Save the source function in this file
+parameter_map source_settings {                      # This parameter map has the controls for the source construction classes
+    string  particle1           pi+                  # Particle type for particle #1
+    string  particle2           pi+                  # Particle type for particle #2
+    int     ndata               100                  # How many bins in the radial direction for the source
+    double  dx                  1.0                  # Step size for the x bins
+    double  xoffset             0.5                  # Offset for the bins: r[n] = xoffset + n*dx where n=0,...,ndata-1
+    bool    fixed_width_bins    true                 # If there's any doubt, the bins are equally sized
+    string  storage_directory   junkInDirectory      # For a 3d source, the terms in either the Cartesian or spherical
+                                                     #     harmonic expansion will be placed in this directory.  The 
+                                                     #     source_file above will contain the data common to all the harmonics.
+    int     lmax                4                    # Whatever the harmonic expansion is, we'll limit it to lmax
+    int     nx                  50                   # Number bins in x direction
+    int     ny                  50                   # Number bins in y direction
+    int     nz                  50                   # Number bins in z direction
+    double  dy                  2.0                  # Step size for the y bins (note, x bin size defined above & is used 
+                                                     #     in radial direction and the x direction)
+    double  dz                  2.0                  # Step size for the z bins
+    double  yoffset             1.0                  # Offset for the y bins: y[n] = yoffset + n*dy where n=0,...,ny-1
+    double  zoffset             1.0                  # Offset for the z bins: z[n] = zoffset + n*dz where n=0,...,nz-1
+    bool    fold_side           true                 # For identical pairs, we can double statistics by assuming q_side -> -q_side
+    bool    fold_out            true                 # For identical pairs, we can double statistics by assuming q_out -> -q_out
+    bool    fold_long           true                 # For identical pairs, we can double statistics by assuming q_long -> -q_long
+}
+
+# Kernel settings, we'll convolute this with the source to get the correlation
+# Note: kernel calculation is expensive, so CorAL tries to save ones it already made
+parameter_map kernel_settings {
+    #int     nqmax       200                         # Only use if not pre-calculated
+    #int     nrmax       200                         # Only use if not pre-calculated
+    #int     kellmax     0                           # Only use if not pre-calculated
+    #double  delq        0.5                         # Only use if not pre-calculated
+    #double  delr        0.5                         # Only use if not pre-calculated
+    bool    IDENTICAL   true                         # Tell the code that pi+ == pi+
+    bool    hbt_only    true                         # Turn off nuclear force
+}
+
+# Settings for the output correlation
+# Note: the settings are the same as for the source for the most part (noting that instead of "x", here we mean "qx")
+# Also note: the particle1 & particle2 don't have to match and the code won't check.  So be careful.
+string  correlation_file test_crab_output_correlation.dat # Save the correlation in this file
+parameter_map correlation_settings {
+    string  particle1           pi+                  
+    string  particle2           pi+                  
+    int     ndata               50
+    double  dx                  10.0
+    double  xoffset             5.0
+    bool    fixed_width_bins    true
+    string  storage_directory   junkOutDirectory
+    int     lmax                4
+    int     nx                  10
+    int     ny                  10
+    int     nz                  10
+    double  dy                  10.0
+    double  dz                  10.0
+    double  yoffset             5.0
+    double  zoffset             5.0
+}
+\end{minted}
+
 
 \subsection{converts2c}
 fold a source w/ kernel to make a correlation
