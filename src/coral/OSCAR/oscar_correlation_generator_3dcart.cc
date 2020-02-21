@@ -115,7 +115,7 @@ bool COSCARCorrelationGenerator3dCart::postProcessPairs( void ){
     result.covmtx_is_active=false;
     for (int i=0;i<result.ndata;++i) {
         if ( pairCount[i] > 1 ) {
-            result.data[i]   = 1.0+result.data[i]/double(pairCount[i]);
+            result.data[i]   = result.data[i]/double(pairCount[i]);
             result.uncert[i] = sqrt(abs(result.uncert[i]/double(pairCount[i]) - result.data[i]*result.data[i])/double(pairCount[i]));
         } else {
             result.data[i]   = 1.0;
