@@ -223,8 +223,8 @@ void make3dCartSourceAndCorrelation( vector<COSCARLine> particleList, parameterM
     WriteParsToFile( soutMap, parameter::getS(inMap, "source_file", "output_source_3d.dat") );
     if (make_plots){
         plot3dSlices( sanswer,
-            getS( inMap, "source_3d_side_plot_filename", "output_source_3d_side_plot.dat" ),
             getS( inMap, "source_3d_out_plot_filename", "output_source_3d_out_plot.dat" ),
+            getS( inMap, "source_3d_side_plot_filename", "output_source_3d_side_plot.dat" ),
             getS( inMap, "source_3d_long_plot_filename", "output_source_3d_long_plot.dat" )
         );
     }
@@ -236,8 +236,8 @@ void make3dCartSourceAndCorrelation( vector<COSCARLine> particleList, parameterM
         WriteParsToFile( coutMap, parameter::getS(inMap, "correlation_file", "output_correlation_3d.dat") );
         if (make_plots){
             plot3dSlices( answer,
-                getS( inMap, "correlation_3d_side_plot_filename", "output_correlation_3d_side_plot.dat" ),
                 getS( inMap, "correlation_3d_out_plot_filename", "output_correlation_3d_out_plot.dat" ),
+                getS( inMap, "correlation_3d_side_plot_filename", "output_correlation_3d_side_plot.dat" ),
                 getS( inMap, "correlation_3d_long_plot_filename", "output_correlation_3d_long_plot.dat" )
             );
         }
@@ -286,8 +286,8 @@ void make3dSphrSourceAndCorrelation( vector<COSCARLine> particleList, parameterM
     WriteParsToFile( soutMap, getS( inMap, "source_file", "output_source_3dsphr.dat" ) );
     if (make_plots){
         plot3dSlices( soualt3d,
-            getS( inMap, "source_3d_side_plot_filename", "output_source_3d_side_plot.dat" ),
             getS( inMap, "source_3d_out_plot_filename", "output_source_3d_out_plot.dat" ),
+            getS( inMap, "source_3d_side_plot_filename", "output_source_3d_side_plot.dat" ),
             getS( inMap, "source_3d_long_plot_filename", "output_source_3d_long_plot.dat" )
         );
     }
@@ -299,11 +299,11 @@ void make3dSphrSourceAndCorrelation( vector<COSCARLine> particleList, parameterM
         cout << endl;
         answer.Write(coutMap);
         answer.writeTerms();
-        WriteParsToFile( soutMap, getS( inMap, "correlation_file", "output_correlation_3dsphr.dat" ) );
+        WriteParsToFile( coutMap, getS( inMap, "correlation_file", "output_correlation_3dsphr.dat" ) );
         if (make_plots){
             plot3dSlices( answer,
-                getS( inMap, "correlation_3d_side_plot_filename", "output_correlation_3d_side_plot.dat" ),
                 getS( inMap, "correlation_3d_out_plot_filename", "output_correlation_3d_out_plot.dat" ),
+                getS( inMap, "correlation_3d_side_plot_filename", "output_correlation_3d_side_plot.dat" ),
                 getS( inMap, "correlation_3d_long_plot_filename", "output_correlation_3d_long_plot.dat" )
             );
         }
@@ -352,8 +352,8 @@ void makeCRABCorrelations( vector<COSCARLine> particleList, parameterMap& inMap,
     if (make_plots) {
         plot1d( corr1d, getS( inMap, "correlation_plot_filename", "output_correlation_1d_plot.dat" ) );
         plot3dSlices( corr3d,
-            getS( inMap, "correlation_3d_side_plot_filename", "output_correlation_3d_side_plot.dat" ),
             getS( inMap, "correlation_3d_out_plot_filename", "output_correlation_3d_out_plot.dat" ),
+            getS( inMap, "correlation_3d_side_plot_filename", "output_correlation_3d_side_plot.dat" ),
             getS( inMap, "correlation_3d_long_plot_filename", "output_correlation_3d_long_plot.dat" )
         );
     }
@@ -370,8 +370,8 @@ void makeSourceMakerSources( vector<COSCARLine> particleList, parameterMap& inMa
         plot1d( source1d, getS( inMap, "source_1d_plot_filename", "output_source_1d_plot.dat" ));
         cout << endl;
         plot3dSlices( source3d,
-            getS( inMap, "source_3d_side_plot_filename", "output_source_3d_side_plot.dat" ),
             getS( inMap, "source_3d_out_plot_filename", "output_source_3d_out_plot.dat" ),
+            getS( inMap, "source_3d_side_plot_filename", "output_source_3d_side_plot.dat" ),
             getS( inMap, "source_3d_long_plot_filename", "output_source_3d_long_plot.dat" ) );
     }
 }

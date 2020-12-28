@@ -249,20 +249,20 @@ bool legendre_3dimager_tester(void){
     
     CSourceFtn3dSphr<CSourceFtn1dLegendrePoly> s = image_l(c,image_com);
     
-    ofstream dataOutS("3d_legendre_data_S.dat");
-    for (int i=0; i<62; ++i){
-        double x = (double)i;
-        dataOutS << x << "  " << s.getValueCart(x,0.,0.) << "  " << s.getErrorCart(x,0.,0.)<<endl;
-    }
     ofstream dataOutO("3d_legendre_data_O.dat");
     for (int i=0; i<62; ++i){
         double x = (double)i;
-        dataOutO << x << "  " << s.getValueCart(0.,x,0.) << "  " << s.getErrorCart(x,0.,0.)<<endl;
+        dataOutO << x << "  " << s.getValueCart(x,0.,0.) << "  " << s.getErrorCart(x,0.,0.)<<endl;
+    }
+    ofstream dataOutS("3d_legendre_data_S.dat");
+    for (int i=0; i<62; ++i){
+        double x = (double)i;
+        dataOutS << x << "  " << s.getValueCart(0.,x,0.) << "  " << s.getErrorCart(0.,x,0.)<<endl;
     }
     ofstream dataOutL("3d_legendre_data_L.dat");
     for (int i=0; i<62; ++i){
         double x = (double)i;
-        dataOutL << x << "  " << s.getValueCart(0.,0.,x) << "  " << s.getErrorCart(x,0.,0.)<<endl;
+        dataOutL << x << "  " << s.getValueCart(0.,0.,x) << "  " << s.getErrorCart(0.,0.,x)<<endl;
     }
     ofstream dataOut("3d_legendre_data_rinv.dat");
     for (int i=0; i<62; ++i){
