@@ -84,5 +84,5 @@ int main( void ){
         cout << q << " " << correlation.getValue(q) << endl;
     }
     
-    return true;
+    return 1;
 }
