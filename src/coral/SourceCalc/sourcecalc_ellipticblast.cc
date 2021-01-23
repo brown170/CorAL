@@ -70,8 +70,7 @@ void CSourceCalc_EllipticBlast::SetSPars(double Rxset,double Ryset,double Tauset
 
 }
 
-void CSourceCalc_EllipticBlast::SetSPars(double Rset,double Tauset,
-				    double Betaset,double Tset,double Ptset){
+void CSourceCalc_EllipticBlast::SetSPars(double Rset, double Tauset, double Betaset, double Tset, double Ptset){
 
   InitSPars();
   parameter::set(spars,"Rx",Rset);
@@ -191,7 +190,7 @@ void CSourceCalc_EllipticBlast::CalcS(CCHArray *A){
 
 }
 
-void CSourceCalc_EllipticBlast::Get_r(double *p,int nsample,double **r){
+void CSourceCalc_EllipticBlast::Get_r(double *p, int nsample, double **r){
   double phi,eta,arg,etaG,u[4],x,y,z,t,Rx,Ry,weight;
   double uxmax,uymax,betaxmax,betaymax,eprime,eu,T,tau;
   double pt,gamma,gammav,rap,rout,rlong,rside,sinhy,coshy;

@@ -74,7 +74,7 @@ void CSourceCalc_OSCAR::SetIDs(int *idlista,int nida,int *idlistb,int nidb){
 	idlist_b=idlistb;
 }
 
-void CSourceCalc_OSCAR::CalcS(CMCList *&lista,CMCList *&listb){
+void CSourceCalc_OSCAR::CalcS(CMCList *&lista, CMCList *&listb){
 	double **ra,**rb;
 	int ia,ib,na=0,nb=0;
 	bool AEQUALB=parameter::getB(spars,"AEQUALB",true);
@@ -117,7 +117,7 @@ void CSourceCalc_OSCAR::CalcS(CMCList *&lista,CMCList *&listb){
 
 }
 
-void CSourceCalc_OSCAR::ReadR(double **ra,int &na,double **rb,int &nb){
+void CSourceCalc_OSCAR::ReadR(double **ra, int &na, double **rb, int &nb){
 	FILE *oscarfile;
 	double r[4],p[4];
 	double MA=parameter::getD(spars,"MA",139.57);
@@ -182,7 +182,7 @@ void CSourceCalc_OSCAR::ReadR(double **ra,int &na,double **rb,int &nb){
 	printf("OSCAR file read: %d events, na=%d, nb=%d\n",ievent,na,nb);
 }
 
-bool CSourceCalc_OSCAR::Check(double *p,double *r,double m,double **ra,int &n){
+bool CSourceCalc_OSCAR::Check(double *p, double *r, double m, double **ra, int &n){
 	double PT=parameter::getD(spars,"PT",600.0);
 	double DELPT=parameter::getD(spars,"DELPT",20.0);
 	double YMIN=parameter::getD(spars,"YMIN",-1.0);
@@ -243,7 +243,7 @@ bool CSourceCalc_OSCAR::Check(double *p,double *r,double m,double **ra,int &n){
 	return success;
 }
 
-bool CSourceCalc_OSCAR::IDMatch(int ident,int *idlist,int nid){
+bool CSourceCalc_OSCAR::IDMatch(int ident, int *idlist, int nid){
 	int i;
 	bool answer=false;
 	for(i=0;i<nid;i++) if(ident==idlist[i]) answer=true;

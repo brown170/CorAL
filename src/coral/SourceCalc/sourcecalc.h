@@ -42,8 +42,8 @@ class CSourceCalc{
  public:
   parameterMap spars;
   virtual void CalcS(CCHArray *A);
-  virtual void CalcS(int lx,int ly,int lz,CCHArray *A);
-  virtual void CalcS(CMCList *&lista,CMCList *&listb);
+  virtual void CalcS(int lx, int ly, int lz, CCHArray *A);
+  virtual void CalcS(CMCList *&lista, CMCList *&listb);
 	virtual void CalcS(C3DArray *threed);
 	virtual void GaussCFCalc(C3DArray *cf3d);
 

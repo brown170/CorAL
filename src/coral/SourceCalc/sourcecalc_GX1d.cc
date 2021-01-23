@@ -53,7 +53,7 @@ void CSourceCalc_GX1D::SetSPars(double lambdaset,double Xfracset,
   parameter::set(spars,"a",aset);
 }
 
-void CSourceCalc_GX1D::CalcS(int lx,int ly,int lz,CCHArray *A){
+void CSourceCalc_GX1D::CalcS(int lx, int ly, int lz, CCHArray *A){
   const double PI=4.0*atan(1.0);
   int ir,L;
   int nradial;

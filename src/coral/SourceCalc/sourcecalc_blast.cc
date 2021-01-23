@@ -70,9 +70,7 @@ double EtaGset,double Maset,double Mbset){
 
 }
 
-void CSourceCalc_Blast::SetSPars(double lambdaset,
-double Rset,double Tauset,double DelTauset){
-
+void CSourceCalc_Blast::SetSPars(double lambdaset, double Rset, double Tauset, double DelTauset){
 	InitSPars();
 	parameter::set(spars,"lambda",lambdaset);
 	parameter::set(spars,"R",Rset);
@@ -166,7 +164,7 @@ void CSourceCalc_Blast::CalcS(CCHArray *A){
 
 }
 
-void CSourceCalc_Blast::CalcS(CMCList *lista,CMCList *listb){
+void CSourceCalc_Blast::CalcS(CMCList *lista, CMCList *listb){
 	double pa[4],pb[4];
 	double ma,mb,Pt,lambda;
 	int nsample;
@@ -196,7 +194,7 @@ void CSourceCalc_Blast::CalcS(CMCList *lista,CMCList *listb){
 
 }
 
-void CSourceCalc_Blast::GetMCList(double *p,CMCList *mclist){
+void CSourceCalc_Blast::GetMCList(double *p, CMCList *mclist){
 	double eta,etaG,u[4],x,y,z,t,tt,R,weight;
 	double umax,betamax,eprime,eu,eumin,T,tau,tau0,deltau;
 	double pt,gamma,gammav;
@@ -251,7 +249,7 @@ void CSourceCalc_Blast::GetMCList(double *p,CMCList *mclist){
 	}
 }
 
-double CSourceCalc_Blast::GetTau(double tau0,double deltau){
+double CSourceCalc_Blast::GetTau(double tau0, double deltau){
 	double tau;
 	do{
 		tau=tau0+deltau*randy->gauss();
