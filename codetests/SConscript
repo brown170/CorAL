@@ -45,6 +45,7 @@ for code in [\
     'ylmtester',\
     'testBoost',\
     'testConvolve',\
+    'testCIntegrateVector',\
     'coulwave/cgtester',\
     'tnt_inversions',\
     'sourcesample_gauss',\
