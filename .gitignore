@@ -1,6 +1,7 @@
 bin
 build
 lib
+include
 .project
 .settings
 .DS_Store
