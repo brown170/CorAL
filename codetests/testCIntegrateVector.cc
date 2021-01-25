@@ -2,7 +2,8 @@
 #include <iostream>
 using namespace std;
 
-void integrand(int* ndim, double* q, int* numfunc, double* f){
+static void integrand(int* ndim, double* q, int* numfunc, double* f){
+	cout << q << endl;
 	f[0]=q[0];
 	f[1]=q[1]*q[1];
 }
@@ -12,6 +13,7 @@ int main(void){
 	CIntegrateVector junk;
     junk.SetNDim(2);
     junk.SetNumFunc(2);
+    junk.SetMaxPts(200);
     junk.SetLimits(0, 0.0, 1.0);
     junk.SetLimits(1, 2.0, 2.2);
 
@@ -20,7 +22,7 @@ int main(void){
     cout << "GetNDim :" << 2 << " == " << junk.GetNDim() << " ?" << endl;
     cout << "GetNumFunc :" << 2 << " == " << junk.GetNumFunc() << " ?"<< endl;
     cout << "GetMinPts :" << 10 << " == " << junk.GetMinPts() << " ?"<< endl;
-    cout << "GetMaxPts :" << 100 << " == " << junk.GetMaxPts() << " ?"<< endl;
+    cout << "GetMaxPts :" << 200 << " == " << junk.GetMaxPts() << " ?"<< endl;
     cout << "GetKey :" << 0 << " == " << junk.GetKey() << " ?"<< endl;
     cout << "GetNW :" << 0 << " == " << junk.GetNW() << " ?"<< endl;
     cout << "GetRestart :" << 0 << " == " << junk.GetRestart() << " ?"<< endl;
@@ -38,6 +40,6 @@ int main(void){
     cout << 1.0 << " == " << junk.GetResults(0) << " +/- " << junk.GetError(0) << " ?"<<endl;
     cout << 0.88266667 << " == " << junk.GetResults(1) << " +/- " << junk.GetError(1) << " ?" << endl;
 
-
+    return 1;
 }
  

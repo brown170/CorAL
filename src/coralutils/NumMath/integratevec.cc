@@ -105,7 +105,7 @@ void CIntegrateVector::CheckMaxPts(void){
     if (_maxpts < _minpts) {MESSAGE<<"Bad MAXPTS"<<ENDM_FATAL; exit(-1);}
     if (_maxpts<3*_numftncalls) { 
         _maxpts=3*_numftncalls+1;
-        MESSAGE << "MAXPTS to low in CIntegrateVector.  Restting value to "<<
+        MESSAGE << "MAXPTS to low in CIntegrateVector.  Resetting value to "<<
             _maxpts<<ENDM_WARN;
     }
 }
