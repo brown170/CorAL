@@ -40,7 +40,6 @@ Misc/misc.h \
 NumMath/constants.h \
 NumMath/crombergintegrator.h \
 NumMath/integratevec.h \
-NumMath/cubature.h \
 NumMath/linalg.h \
 NumMath/random.h \
 ParameterMap/parametermap.h \
@@ -82,6 +81,7 @@ ThirdPartyPackages/TNT/tnt_subscript.h \
 ThirdPartyPackages/TNT/tnt_vector.h \
 ThirdPartyPackages/TNT/tnt_version.h \
 ThirdPartyPackages/yasper/yasper.h \
+ThirdPartyPackages/cubature-master/cubature.h \
 utilities.h \
 utils.h \
 ')
@@ -104,7 +104,6 @@ Misc/misc.cc \
 NumMath/crombergintegrator.cc \
 NumMath/integratevec.cc \
 NumMath/random.cc \
-NumMath/cubature.cc \
 ParameterMap/parametermap.cc \
 SpecialFunctions/Bessel/bess.cc \
 SpecialFunctions/CartesianHarmonics/chcalc.cc \
@@ -114,17 +113,8 @@ SpecialFunctions/CoulWave/coulwave.cc \
 SpecialFunctions/gamma.cc \
 SpecialFunctions/ucofpak_CC.cc \
 SpecialFunctions/Ylm/ylm.cc \
-ThirdPartyPackages/dcuhre/d07hre.cc \
-ThirdPartyPackages/dcuhre/d09hre.cc \
-ThirdPartyPackages/dcuhre/d113re.cc \
-ThirdPartyPackages/dcuhre/d132re.cc \
-ThirdPartyPackages/dcuhre/dadhre.cc \
-ThirdPartyPackages/dcuhre/dchhre.cc \
-ThirdPartyPackages/dcuhre/dcuhre.cc \
-ThirdPartyPackages/dcuhre/dfshre.cc \
-ThirdPartyPackages/dcuhre/dinhre.cc \
-ThirdPartyPackages/dcuhre/drlhre.cc \
-ThirdPartyPackages/dcuhre/dtrhre.cc \
+ThirdPartyPackages/cubature-master/pcubature.cc \
+ThirdPartyPackages/cubature-master/hcubature.cc \
 ThirdPartyPackages/Fortran/f2c.cc \
 utils.cc \
 ')
