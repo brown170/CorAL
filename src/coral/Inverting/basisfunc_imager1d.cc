@@ -352,6 +352,7 @@ void CBasisFuncImager1d::set_kmtx( const CCorrFtn1dHisto& corrin, const CBasisFu
     CIntegrateCubature integrate;
     double dq, qmin, qmax, rmin, rmax;
     integrate.set_ndim(2);
+    integrate.set_fdim(1);
     __l=corrin.l;
     for (int i=0;i<kmtx_tmp.dim1();++i){
         dq   = corrin.binWidth(i);
@@ -377,7 +378,7 @@ void CBasisFuncImager1d::set_kmtx( const CCorrFtn1dHisto& corrin, const CBasisFu
 }
 
 //----------------- kp_integrand ---------------------------
-double CBasisFuncImager1d::kp_integrand( unsigned int ndim, const double* x, void* classptr ){
+int CBasisFuncImager1d::kp_integrand( unsigned int ndim, const double* x, void* classptr, unsigned fdim, double *fval ){//changed return type of function from double to int
 
     CBasisFuncImager1d *cls = (CBasisFuncImager1d*)classptr;
 //    return 1.0;
