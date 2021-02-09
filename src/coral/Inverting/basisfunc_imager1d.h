@@ -155,7 +155,7 @@ public:
     bool initialize_source( const CCorrFtn1dHisto& corrin, CSourceFtnBase& souout, const parameterMap& m );
     void set_constraints(const CBasisFunctionExpansion1d& souout);
     void set_kmtx(const CCorrFtn1dHisto& corrin, const CBasisFunctionExpansion1d& souout, const parameterMap& m );
-    static double kp_integrand( unsigned int ndim, const double* x, void* classptr );
+    static int kp_integrand( unsigned int ndim, const double* x, void* classptr, unsigned fdim, double *fval);
 };
 
 #endif
