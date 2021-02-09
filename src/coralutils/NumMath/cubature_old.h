@@ -30,6 +30,9 @@
 
 #ifndef TEST_INTEGRATOR
 #include "message.h"
+
+#include "cubature.h"   //these files are included to use the new integration routine hcubature
+#include "vwrapper.h"
 #endif
 
 /* Adaptive multidimensional integration on hypercubes (or, really,
@@ -52,7 +55,14 @@
 
 */
 
-typedef double ( *integrand ) ( unsigned ndim, const double *x, void * );
+/* a vector integrand - evaluates the function at the given point x        //previous function f was not a vector, here, fval is written in terms of fdim no. of arrays
+   (an array of length ndim) and returns the result in fval (an array
+   of length fdim).   The void* parameter is there in case you have
+   to pass any additional data through to your function (it corresponds
+   to the fdata parameter you pass to cubature).  Return 0 on
+   success or nonzero to terminate the integration. */
+//typedef int (*integrand) (unsigned ndim, const double *x, void *,
+                          //unsigned fdim, double *fval);
 
 /* Integrate the function f from xmin[dim] to xmax[dim], with at
    most maxEval function evaluations (0 for no limit),
@@ -60,11 +70,18 @@ typedef double ( *integrand ) ( unsigned ndim, const double *x, void * );
    the integral, and estimated_error returns the estimate for the
    absolute error in val.  The return value of the function is 0
    on success and non-zero if there was an error. */
-int adapt_integrate( integrand f, void *fdata,
+/*int adapt_integrate( integrand f, void *fdata,                                     //old integration routine, commented out.
 		    unsigned dim, const double *xmin, const double *xmax, 
 		    unsigned maxEval, 
 		    double reqAbsError, double reqRelError, 
-		    double *val, double *estimated_error );
+		    double *val, double *estimated_error );*/
+		    
+		    
+		    
+
+	      
+	      
+
 
 #ifndef TEST_INTEGRATOR
 //---------------------------------------
@@ -75,23 +92,24 @@ class CIntegrateCubature{
 
     public:
         // Constructors and Destructors
-        CIntegrateCubature(void): abserr( 1e-14 ), relerr( 1e-6 ), value( 0. ), error( 0. ), neval( 0 ),
-            _ndim( 0 ), _lowerlimits( NULL ), _upperlimits( NULL ){}
+        CIntegrateCubature(void): abserr( 1e-14 ), relerr( 1e-6 ), error( 0 ), _fdim( 1 ),  value ( 0 ), neval( 0 ),/*Now the integrand f(x) is a vector, so value and errors are arrays of rank _fdim*/ 
+		_ndim( 0 ), _lowerlimits( NULL ), _upperlimits( NULL ){}
         ~CIntegrateCubature(void){ delete_limits(); }
 
         // Initialization
         void set_ndim( int n ){ _ndim = n; new_limits(); }
+        void set_fdim( int n ){_fdim = n;}  //function to take dimension of f from user
         void set_limit( int n, double lolim, double uplim ){ _lowerlimits[n] = lolim; _upperlimits[n] = uplim; }
 
         // Member access
         int get_ndim( void ){ return _ndim; }
         double get_upper_limit( int n ){ return _upperlimits[n]; }
         double get_lower_limit( int n ){ return _lowerlimits[n]; }
-        
+        int get_fdim(void){return _fdim;}//function to get _fdim
         // Main Routine
         int compute( integrand _func, void *_funcdata ){ 
             check_ndim();
-            return adapt_integrate( _func, _funcdata, _ndim, _lowerlimits, _upperlimits, neval,  abserr, relerr, &value, &error ); 
+            return hcubature( _fdim, _func, _funcdata, _ndim, _lowerlimits, _upperlimits, neval,  abserr, relerr, ERROR_INDIVIDUAL, &value, &error ); //ERROR_INDIVIDUAL type of norm being used for the vector integrand
         }
         
         // Member data that the user supplies somehow
@@ -101,7 +119,7 @@ class CIntegrateCubature{
         // Member data we compute ourselves 
         double value;
         double error;
-        int neval;
+        size_t neval;
 
     private:
         
@@ -128,6 +146,7 @@ class CIntegrateCubature{
 
         // Member data that the user supplies somehow
         int _ndim;
+        int _fdim;// dimension of vector integrand f
         double * _lowerlimits;
         double * _upperlimits;
 };
