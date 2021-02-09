@@ -83,6 +83,8 @@ ThirdPartyPackages/TNT/tnt_vector.h \
 ThirdPartyPackages/TNT/tnt_version.h \
 ThirdPartyPackages/yasper/yasper.h \
 ThirdPartyPackages/cubature-1.0.3/cubature.h \
+ThirdPartyPackages/cubature-1.0.3/converged.h \
+ThirdPartyPackages/cubature-1.0.3/vwrapper.h \
 utilities.h \
 utils.h \
 ')
@@ -105,7 +107,6 @@ Misc/misc.cc \
 NumMath/crombergintegrator.cc \
 NumMath/integratevec.cc \
 NumMath/random.cc \
-NumMath/cubature_old.cc \
 ParameterMap/parametermap.cc \
 SpecialFunctions/Bessel/bess.cc \
 SpecialFunctions/CartesianHarmonics/chcalc.cc \
