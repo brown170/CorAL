@@ -383,9 +383,10 @@ int CBasisFuncImager1d::kp_integrand( unsigned int ndim, const double* x, void* 
     CBasisFuncImager1d *cls = (CBasisFuncImager1d*)classptr;
 //    return 1.0;
 
-    return 4.0 * PI * x[1] * x[1] *
+    fval[0]= 4.0 * PI * x[1] * x[1] *
 //Bessel::jn(cls->__l,2.0*x[0]*x[1]/197.3269602)* // for debugging
         ( cls->kernelPtr->GetValue( cls->__l, x[0], x[1] ) )*
         ( cls->sourcePtr->basisFunction( x[1], cls->__j, 0 ) );
+    return 0;
 };
 
