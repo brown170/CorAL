@@ -92,13 +92,13 @@ class CIntegrateCubature{
 
     public:
         // Constructors and Destructors
-        CIntegrateCubature(void): abserr( 1e-14 ), relerr( 1e-6 ), error( 0 ), _fdim( 1 ),  value ( 0 ), neval( 0 ),/*Now the integrand f(x) is a vector, so value and errors are arrays of rank _fdim*/ 
+        CIntegrateCubature(void): abserr( 1e-14 ), relerr( 1e-6 ), error( 0 ), _fdim( 1 ),  value ( NULL ), neval( NULL ),/*Now the integrand f(x) is a vector, so value and errors are arrays of rank _fdim*/ 
 		_ndim( 0 ), _lowerlimits( NULL ), _upperlimits( NULL ){}
-        ~CIntegrateCubature(void){ delete_limits(); }
+        ~CIntegrateCubature(void){ delete_limits(); delete_valerror(); }
 
         // Initialization
         void set_ndim( int n ){ _ndim = n; new_limits(); }
-        void set_fdim( int n ){_fdim = n;}  //function to take dimension of f from user
+        void set_fdim( int n ){_fdim = n; add_valerror(); }  //function to take dimension of f from user and then construct _fdim dimensional value and error array
         void set_limit( int n, double lolim, double uplim ){ _lowerlimits[n] = lolim; _upperlimits[n] = uplim; }
 
         // Member access
@@ -109,7 +109,7 @@ class CIntegrateCubature{
         // Main Routine
         int compute( integrand _func, void *_funcdata ){ 
             check_ndim();
-            return hcubature( _fdim, _func, _funcdata, _ndim, _lowerlimits, _upperlimits, neval,  abserr, relerr, ERROR_INDIVIDUAL, &value, &error ); //ERROR_INDIVIDUAL type of norm being used for the vector integrand
+            return hcubature( _fdim, _func, _funcdata, _ndim, _lowerlimits, _upperlimits, neval,  abserr, relerr, ERROR_INDIVIDUAL, value, error ); //ERROR_INDIVIDUAL type of norm being used for the vector integrand
         }
         
         // Member data that the user supplies somehow
@@ -117,8 +117,8 @@ class CIntegrateCubature{
         double relerr;
 
         // Member data we compute ourselves 
-        double value;
-        double error;
+        double *value;
+        double *error;
         size_t neval;
 
     private:
@@ -143,6 +143,21 @@ class CIntegrateCubature{
             _lowerlimits = new double[_ndim];
             _upperlimits = new double[_ndim];
         }
+	//dynamical memory management for value and error arrays
+	void delete_valerror(void){
+		if (value != NULL) delete [] value;
+		if (error != NULL) delete [] error;
+		_fdim = 0;
+		value = NULL;
+		error = NULL;}
+		
+	void add_valerror(void){
+		if (value != NULL) delete_valerror();
+        	if (error != NULL) delete_valerror();
+        	if ( _fdim <= 0) { MESSAGE << "Bad FDIM" << ENDM_FATAL; exit( EXIT_FAILURE ); }
+        	value = new double [_fdim];
+        	error = new double [_fdim];
+     }
 
         // Member data that the user supplies somehow
         int _ndim;
