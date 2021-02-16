@@ -367,7 +367,7 @@ void CBasisFuncImager1d::set_kmtx( const CCorrFtn1dHisto& corrin, const CBasisFu
             if ( qmax <= qmin ) kmtx_tmp[i][j] = 0.0;
             else {
                 integrate.compute( kp_integrand, this );
-                kmtx_tmp[i][j] = __TYPICAL_SOURCE_SCALE__ * integrate.value / dq;
+                kmtx_tmp[i][j] = __TYPICAL_SOURCE_SCALE__ * (*(integrate.value)) / dq; //as value in CIntegrateCubature is a pointer variable now another * is added
             }
         }
     }
