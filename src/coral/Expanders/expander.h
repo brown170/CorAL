@@ -46,7 +46,7 @@
 #include "sou3d_ylm.h"
 #include "sou1d_histo.h"
 #include "linalg.h"
-#include "integratevec.h"
+#include "integrator.h"
 
 using namespace TNT;
 using namespace parameter;
@@ -374,10 +374,10 @@ private:
         bool reim;
         
         // integrator for sphr->cart matrix
-        CIntegrateVector J;
-        J.SetNDim(3);
-        J.SetNumFunc(mtx_list.size());
-        J.SetMaxPts(10000);
+        CIntegrateCubature J;
+        J.set_ndim(3);
+        J.set_fdim(mtx_list.size());
+        J.set_maxEval(10000);
         
         cout << "     Radial bin counter: "<<flush;
         for (int n=0;n<nr;++n){
@@ -423,12 +423,12 @@ private:
                             ((qmin<=rlo)&&(qmax>=rlo))){
                             
                             // fixed limits
-                            J.SetLimits(0,xlo,xhi);
-                            J.SetLimits(1,ylo,yhi);
-                            J.SetLimits(2,zlo,zhi);
+                            J.set_limit(0,xlo,xhi);
+                            J.set_limit(1,ylo,yhi);
+                            J.set_limit(2,zlo,zhi);
                             
                             // Integrate!
-                            J.Compute(this,sphr2CartMtxIntegrand);// for sphr->cart
+                            J.compute(sphr2CartMtxIntegrand,this);// for sphr->cart
                             
                             // Unpack into mtxlist
                             for (unsigned int ilist=0;ilist<mtx_list.size();++ilist){
@@ -447,7 +447,7 @@ private:
                                 int a_xz =targ.whatIndex( targ.flipBinX(iS), iO,                targ.flipBinZ(iL) );
                                 int a_xyz=targ.whatIndex( targ.flipBinX(iS), targ.flipBinY(iO), targ.flipBinZ(iL) );
                                 
-                                double mtxelement = factor*J.GetResults(ilist);
+                                double mtxelement = factor*J.get_results(ilist);
                                 if (reim) { // REAL PART....
                                             // use symmetry to set the elements as needed
                                     mtx_list[ilist][a][n]     =                      mtxelement;
@@ -488,10 +488,10 @@ private:
         bool reim;
         
         // integrator for cart->sphr matrix
-        CIntegrateVector J;
-        J.SetNDim(3);
-        J.SetNumFunc(mtx_list.size());
-        J.SetMaxPts(10000);
+        CIntegrateCubature J;
+        J.set_ndim(3);
+        J.set_fdim(mtx_list.size());
+        J.set_maxEval(10000);
         
         cout << "     Radial bin counter: "<<flush;
         for (int n=0;n<nr;n++){
@@ -537,12 +537,12 @@ private:
                             ((qmin<=rlo)&&(qmax>=rlo))){
                             
                             // fixed limits
-                            J.SetLimits(0,xlo,xhi);
-                            J.SetLimits(1,ylo,yhi);
-                            J.SetLimits(2,zlo,zhi);
+                            J.set_limit(0,xlo,xhi);
+                            J.set_limit(1,ylo,yhi);
+                            J.set_limit(2,zlo,zhi);
                             
                             // Integrate!
-                            J.Compute(this,cart2SphrMtxIntegrand);// for cart->sphr
+                            J.compute(cart2SphrMtxIntegrand,this);// for cart->sphr
                             
                             // Unpack into mtxlist
                             for (unsigned int ilist=0;ilist<mtx_list.size();ilist++){
@@ -572,7 +572,7 @@ private:
                                 // On the other hand, if there is a symmetry in a particular direction, 
                                 // when you flip, you get back the original index, so the adding operation
                                 // will add the flipped matrix element into the unflipped one.
-                                double mtxelement = factor*J.GetResults(ilist);
+                                double mtxelement = factor*J.get_results(ilist);
                                 if (reim) { // REAL PART....
                                             // use symmetry to set the elements
                                     mtx_list[ilist][n][a]     +=                      mtxelement;
@@ -621,7 +621,7 @@ private:
     
     //! ------------------ cart2SphrMtxIntegrand -------------------
     // The integrand cart->sphr
-    static void cart2SphrMtxIntegrand(void* classptr, int* ndim, double* q, int* numfunc, double* f){
+    static int cart2SphrMtxIntegrand( unsigned ndim, const double* q, void* classptr, unsigned numSfunc, double* f){
         CCart2SphrExpander<THisto1d> *cls = (CCart2SphrExpander<THisto1d>*)classptr;
         double qrad=cls->length(q[0],q[1],q[2]);
         double qfact;
@@ -639,11 +639,12 @@ private:
                 f[il]=0.0;
             }
         }
+        return 0;
     }
     
     //! ------------------ sphr2CartMtxIntegrand -------------------
     // The integrand sphr->cart
-    static void sphr2CartMtxIntegrand(void* classptr, int* ndim, double* q, int* numfunc, double* f){
+    static int sphr2CartMtxIntegrand(unsigned ndim, const double* q, void* classptr, unsigned numfunc, double* f){
         CCart2SphrExpander<THisto1d> *cls = (CCart2SphrExpander<THisto1d>*)classptr;
         double qrad=cls->length(q[0],q[1],q[2]);
         double_complex ylm;
@@ -664,6 +665,7 @@ private:
                 f[il]=0.0;
             }
         }
+        return 0;
     }
     
     // --------------- length, lengthsqr ------------------
