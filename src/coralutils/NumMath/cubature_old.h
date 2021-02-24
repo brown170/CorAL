@@ -25,15 +25,18 @@
 // MA 02111-1307 USA
 // 
 // <<END-copyright>>
+
+/* This file uses cubature routine from Steven G.Johnson's cubature-1.10.3 package to carry out any multidimensional adaptive integration. 
+The cubature is a free software and available for download at stevengj/cubature. */
+
+
 #ifndef __INTEGRATECUB_H
 #define __INTEGRATECUB_H
 
 #ifndef TEST_INTEGRATOR
 #include "message.h"
 
-#include "cubature.h"   //these files are included to use the new integration routine hcubature
-#include "vwrapper.h"
-#endif
+ 
 
 /* Adaptive multidimensional integration on hypercubes (or, really,
    hyper-rectangles) using cubature rules.
@@ -55,61 +58,97 @@
 
 */
 
-/* a vector integrand - evaluates the function at the given point x        //previous function f was not a vector, here, fval is written in terms of fdim no. of arrays
+
+
+/*cubature.h and converged.h are part of Steven G.Johnson's cubature-1.10.3 package. These files are included to use 
+the hcubature integration rule from cubature-1.10.3 package.*/
+#include "cubature.h"   
+#include "converged.h"
+#endif
+
+
+
+
+/* Type of integrand to be evaluated as defined in cubature-1.10.3 package.
+
+a vector integrand - evaluates the function at the given point x        
    (an array of length ndim) and returns the result in fval (an array
    of length fdim).   The void* parameter is there in case you have
    to pass any additional data through to your function (it corresponds
    to the fdata parameter you pass to cubature).  Return 0 on
-   success or nonzero to terminate the integration. */
-//typedef int (*integrand) (unsigned ndim, const double *x, void *,
-                          //unsigned fdim, double *fval);
+   success or nonzero to terminate the integration. 
+   
+	typedef int (*integrand) (unsigned ndim, const double *x, void *,
+                          unsigned fdim, double *fval);*/
+                          
+                          
+/*Different ways of measuring the absolute and relative error when
+   we have multiple integrands, given a vector e of error estimates
+   in the individual components of a vector v of integrands.  These
+   are all equivalent when there is only a single integrand. 
+typedef enum {
+     ERROR_INDIVIDUAL = 0,  individual relerr criteria in each component 
+     ERROR_PAIRED,  paired L2 norms of errors in each component,
+		      mainly for integrating vectors of complex numbers 
+     ERROR_L2, abserr is L_2 norm |e|, and relerr is |e|/|v| 
+     ERROR_L1,  abserr is L_1 norm |e|, and relerr is |e|/|v| 
+     ERROR_LINF  abserr is L_\infty norm |e|, and relerr is |e|/|v| 
+} error_norm;*/
+                          
 
-/* Integrate the function f from xmin[dim] to xmax[dim], with at
+
+/*The cubature routine from cubature-1.10.3 which will be used to integrate the integrand.
+
+Integrate the function f from xmin[dim] to xmax[dim], with at
    most maxEval function evaluations (0 for no limit),
    until the given absolute is achieved relative error.  val returns
    the integral, and estimated_error returns the estimate for the
-   absolute error in val.  The return value of the function is 0
-   on success and non-zero if there was an error. */
-/*int adapt_integrate( integrand f, void *fdata,                                     //old integration routine, commented out.
-		    unsigned dim, const double *xmin, const double *xmax, 
-		    unsigned maxEval, 
-		    double reqAbsError, double reqRelError, 
-		    double *val, double *estimated_error );*/
-		    
-		    
-		    
-
+   absolute error in val. Both are arrays of size fdim.  The return value of the function is 0
+   on success and non-zero if there was an error. 
+   
+   adapative integration by partitioning the integration domain ("h-adaptive")
+   and using the same fixed-degree quadrature in each subdomain, recursively,
+   until convergence is achieved. 
+int hcubature(unsigned fdim, integrand f, void *fdata,
+	      unsigned dim, const double *xmin, const double *xmax, 
+	      size_t maxEval, double reqAbsError, double reqRelError, 
+	      error_norm norm,
+	      double *val, double *err);*/
 	      
-	      
 
 
+		    
 #ifndef TEST_INTEGRATOR
 //---------------------------------------
-// Integrator that integrates an n-dim function
-// using cubature routine
+// Integrator that integrates an fdim function with ndim measure
+// using hcubature routine
 //---------------------------------------
 class CIntegrateCubature{
 
     public:
         // Constructors and Destructors
-        CIntegrateCubature(void): abserr( 1e-14 ), relerr( 1e-6 ), error( 0 ), _fdim( 1 ),  value ( NULL ), neval( NULL ),/*Now the integrand f(x) is a vector, so value and errors are arrays of rank _fdim*/ 
-		_ndim( 0 ), _lowerlimits( NULL ), _upperlimits( NULL ){}
-        ~CIntegrateCubature(void){ delete_limits(); delete_valerror(); }
+        CIntegrateCubature(void): abserr( 1e-14 ), relerr( 1e-6 ),  neval( 0 ), value( NULL ), error( NULL ),
+            _ndim( 0 ),_fdim( 0 ), _lowerlimits( NULL ), _upperlimits( NULL ){}
+        ~CIntegrateCubature(void){ delete_limits(); delete_valerror();}
 
         // Initialization
         void set_ndim( int n ){ _ndim = n; new_limits(); }
-        void set_fdim( int n ){_fdim = n; add_valerror(); }  //function to take dimension of f from user and then construct _fdim dimensional value and error array
+        void set_fdim( int n ){_fdim = n;  add_valerror();}
         void set_limit( int n, double lolim, double uplim ){ _lowerlimits[n] = lolim; _upperlimits[n] = uplim; }
 
         // Member access
         int get_ndim( void ){ return _ndim; }
         double get_upper_limit( int n ){ return _upperlimits[n]; }
         double get_lower_limit( int n ){ return _lowerlimits[n]; }
-        int get_fdim(void){return _fdim;}//function to get _fdim
+        int get_fdim(void){return _fdim;}
+        double get_abserr(void){return abserr;}
+        double get_relerr(void){return relerr;}
+        int get_neval(void){return neval;}
+        
         // Main Routine
-        int compute( integrand _func, void *_funcdata ){ 
-            check_ndim();
-            return hcubature( _fdim, _func, _funcdata, _ndim, _lowerlimits, _upperlimits, neval,  abserr, relerr, ERROR_INDIVIDUAL, value, error ); //ERROR_INDIVIDUAL type of norm being used for the vector integrand
+        int compute( integrand _func, void *_funcdata ){
+			 check_ndim();
+            return hcubature( _fdim, _func, _funcdata, _ndim, _lowerlimits, _upperlimits, neval,  abserr, relerr, ERROR_INDIVIDUAL, value, error ); 
         }
         
         // Member data that the user supplies somehow
@@ -117,9 +156,10 @@ class CIntegrateCubature{
         double relerr;
 
         // Member data we compute ourselves 
-        double *value;
+        
+        double  *value;
         double *error;
-        size_t neval;
+        int neval;
 
     private:
         
@@ -129,6 +169,7 @@ class CIntegrateCubature{
         }
         
         // Memory management
+        	//For the upper and lower limits
         void delete_limits(void){
             if ( _lowerlimits != NULL ) delete [] _lowerlimits;
             if ( _upperlimits != NULL ) delete [] _upperlimits;
@@ -143,25 +184,27 @@ class CIntegrateCubature{
             _lowerlimits = new double[_ndim];
             _upperlimits = new double[_ndim];
         }
-	//dynamical memory management for value and error arrays
-	void delete_valerror(void){
+           //For value and error arrays
+        void delete_valerror(void){
 		if (value != NULL) delete [] value;
 		if (error != NULL) delete [] error;
 		_fdim = 0;
 		value = NULL;
 		error = NULL;}
 		
-	void add_valerror(void){
-		if (value != NULL) delete_valerror();
-        	if (error != NULL) delete_valerror();
-        	if ( _fdim <= 0) { MESSAGE << "Bad FDIM" << ENDM_FATAL; exit( EXIT_FAILURE ); }
-        	value = new double [_fdim];
-        	error = new double [_fdim];
+		void add_valerror(void){
+			
+        if (value != NULL) delete_valerror();
+        if (error != NULL) delete_valerror();
+        if ( _fdim <= 0) { MESSAGE << "Bad FDIM" << ENDM_FATAL; exit( EXIT_FAILURE ); }
+        value = new double [_fdim];
+        error = new double [_fdim];
      }
+     	
 
         // Member data that the user supplies somehow
         int _ndim;
-        int _fdim;// dimension of vector integrand f
+        int _fdim;
         double * _lowerlimits;
         double * _upperlimits;
 };
