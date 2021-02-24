@@ -60,10 +60,9 @@ The cubature is a free software and available for download at stevengj/cubature.
 
 
 
-/*cubature.h and converged.h are part of Steven G.Johnson's cubature-1.10.3 package. These files are included to use 
-the hcubature integration rule from cubature-1.10.3 package.*/
+/*cubature.h and converged.h are part of Steven G.Johnson's cubature-1.10.3 package. The cubature.h file is included to use 
+the hcubature integration rule from cubature-1.10.3 package. The package is in /src/coralutils/ThirdPartyPackages */
 #include "cubature.h"   
-#include "converged.h"
 #endif
 
 
@@ -144,6 +143,7 @@ class CIntegrateCubature{
         double get_abserr(void){return abserr;}
         double get_relerr(void){return relerr;}
         int get_neval(void){return neval;}
+	double get_results(int n){return value[n];}
         
         // Main Routine
         int compute( integrand _func, void *_funcdata ){
