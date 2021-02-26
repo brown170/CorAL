@@ -43,6 +43,7 @@ NumMath/integratevec.h \
 NumMath/linalg.h \
 NumMath/random.h \
 NumMath/cubature_old.h \
+NumMath/integrator.h \
 ParameterMap/parametermap.h \
 SpecialFunctions/Chebyshev/chebyshev.h \
 SpecialFunctions/Chebyshev/chebyshev_fit.h \
