@@ -42,7 +42,6 @@ NumMath/crombergintegrator.h \
 NumMath/integratevec.h \
 NumMath/linalg.h \
 NumMath/random.h \
-NumMath/cubature_old.h \
 NumMath/integrator.h \
 ParameterMap/parametermap.h \
 SpecialFunctions/Chebyshev/chebyshev.h \
@@ -117,8 +116,7 @@ SpecialFunctions/CoulWave/coulwave.cc \
 SpecialFunctions/gamma.cc \
 SpecialFunctions/ucofpak_CC.cc \
 SpecialFunctions/Ylm/ylm.cc \
-ThirdPartyPackages/cubature-1.0.3/pcubature.cc \
-ThirdPartyPackages/cubature-1.0.3/hcubature.cc \
+ThirdPartyPackages/cubature-1.0.3/hcubature.c \
 ThirdPartyPackages/Fortran/f2c.cc \
 utils.cc \
 ')
