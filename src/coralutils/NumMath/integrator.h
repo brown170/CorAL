@@ -134,6 +134,7 @@ class CIntegrateCubature{
         void set_ndim( int n ){ _ndim = n; new_limits(); }
         void set_fdim( int n ){_fdim = n;  add_valerror();}
         void set_limit( int n, double lolim, double uplim ){ _lowerlimits[n] = lolim; _upperlimits[n] = uplim; }
+	void set_maxEval(int n){ neval = n;}
 
         // Member access
         int get_ndim( void ){ return _ndim; }
