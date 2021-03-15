@@ -1,4 +1,4 @@
-#include "cubature_old.h"
+#include "integrator.h"
 #include <iostream>
 using namespace std;
 
