@@ -33,7 +33,7 @@
 #include "tnt_array1d.h"
 #include "linalg.h"
 #include "lsqrinvert.h"
-#include "cubature_old.h"
+#include "integrator.h"
 #include "sf.h"
 #include <cmath>
 
