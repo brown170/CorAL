@@ -27,7 +27,7 @@
 // <<END-copyright>>
 
 /* This file uses cubature routine from Steven G.Johnson's cubature-1.10.3 package to carry out any multidimensional adaptive integration. 
-The cubature is a free software and available for download at stevengj/cubature. */
+This code is a free software under the terms of the GNU General Public License (v2 or later) and available for download at stevengj/cubature. */
 
 
 #ifndef __INTEGRATECUB_H
