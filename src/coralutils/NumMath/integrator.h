@@ -60,7 +60,7 @@ This code is a free software under the terms of the GNU General Public License (
 
 
 
-/*cubature.h and converged.h are part of Steven G.Johnson's cubature-1.10.3 package. The cubature.h file is included to use 
+/*cubature.h is part of Steven G.Johnson's cubature-1.10.3 package. The cubature.h file is included to use 
 the hcubature integration rule from cubature-1.10.3 package. The package is in /src/coralutils/ThirdPartyPackages */
 #include "cubature.h"   
 #endif
@@ -126,7 +126,7 @@ class CIntegrateCubature{
 
     public:
         // Constructors and Destructors
-        CIntegrateCubature(void): abserr( 1e-14 ), relerr( 1e-6 ),  neval( 0 ), value( NULL ), error( NULL ),
+        CIntegrateCubature(void): abserr( 1e-14 ), relerr( 1e-6 ), value( NULL ), neval( 0 ), error( NULL ),
             _ndim( 0 ),_fdim( 0 ), _lowerlimits( NULL ), _upperlimits( NULL ){}
         ~CIntegrateCubature(void){ delete_limits(); delete_valerror();}
 
